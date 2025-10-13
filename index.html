@@ -346,10 +346,10 @@
 
     <script>
         // Global variables
-        let API_URL = '';
-        let API_KEY = '';
-        let SUPABASE_URL = '';
-        let SUPABASE_KEY = '';
+        let API_URL = 'https://wisehub-api.zullstore21.workers.dev'; // Default URL
+        let API_KEY = ''; // Will be set on login
+        let SUPABASE_URL = 'https://iepdoukegjkivfceygsg.supabase.co';
+        let SUPABASE_KEY = ''; // Not used directly in frontend
 
         // Login function
         async function login() {
@@ -394,6 +394,13 @@
             if (savedUrl && savedKey) {
                 document.getElementById('apiUrl').value = savedUrl;
                 document.getElementById('apiKey').value = savedKey;
+                
+                // Auto-login
+                API_URL = savedUrl;
+                API_KEY = savedKey;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                loadDashboard();
             }
         };
 
@@ -419,19 +426,6 @@
             await loadUsers();
         }
 
-        // Supabase API helper
-        async function supabaseQuery(table, filters = '', method = 'GET', body = null) {
-            // Extract Supabase URL from API_URL if it's a worker
-            // For now, we'll use direct Supabase access
-            // You need to add Supabase credentials in the worker or here
-            
-            // Since we're using Cloudflare Workers, we'll proxy through it
-            // This is a simplified version - you may need to add more endpoints
-            
-            alert('Note: Direct Supabase queries not implemented yet. Use API endpoints.');
-            return [];
-        }
-
         // Load stats
         async function loadStats() {
             try {
@@ -442,15 +436,23 @@
                 if (response.ok) {
                     const stats = await response.json();
                     
-                    document.getElementById('totalUsers').innerText = stats.totalUsers;
-                    document.getElementById('activeUsers').innerText = stats.activeUsers;
-                    document.getElementById('todayLogins').innerText = stats.todayLogins;
-                    document.getElementById('totalGames').innerText = stats.totalGames;
+                    document.getElementById('totalUsers').innerText = stats.totalUsers || 0;
+                    document.getElementById('activeUsers').innerText = stats.activeUsers || 0;
+                    document.getElementById('todayLogins').innerText = stats.todayLogins || 0;
+                    document.getElementById('totalGames').innerText = stats.totalGames || 0;
                 } else {
                     console.error('Failed to load stats');
+                    document.getElementById('totalUsers').innerText = '0';
+                    document.getElementById('activeUsers').innerText = '0';
+                    document.getElementById('todayLogins').innerText = '0';
+                    document.getElementById('totalGames').innerText = '0';
                 }
             } catch (error) {
                 console.error('Error loading stats:', error);
+                document.getElementById('totalUsers').innerText = '0';
+                document.getElementById('activeUsers').innerText = '0';
+                document.getElementById('todayLogins').innerText = '0';
+                document.getElementById('totalGames').innerText = '0';
             }
         }
 
@@ -460,13 +462,12 @@
             container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading users...</p></div>';
             
             try {
-                // This requires a new endpoint in your worker: /admin/list-users
                 const response = await fetch(API_URL + '/admin/list-users', {
                     headers: { 'x-api-key': API_KEY }
                 });
                 
                 if (!response.ok) {
-                    container.innerHTML = '<div class="alert alert-error">Failed to load users. Add /admin/list-users endpoint to worker.</div>';
+                    container.innerHTML = '<div class="alert alert-error">Failed to load users. Check your API connection.</div>';
                     return;
                 }
                 
@@ -713,6 +714,34 @@
                 }
             } catch (error) {
                 document.getElementById('gameResult').innerHTML = '<div class="alert alert-error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+
+        // Toggle game status
+        async function toggleGame(placeId, isActive) {
+            try {
+                const response = await fetch(API_URL + '/admin/toggle-game', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        placeId: placeId,
+                        isActive: isActive
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(`✅ Game ${isActive ? 'enabled' : 'disabled'} successfully!`);
+                    loadGames();
+                } else {
+                    alert('❌ Failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
             }
         }
 
