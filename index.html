@@ -435,15 +435,20 @@
         // Load stats
         async function loadStats() {
             try {
-                // These would come from dedicated endpoints
-                // For now, using placeholder values
+                const response = await fetch(API_URL + '/admin/stats', {
+                    headers: { 'x-api-key': API_KEY }
+                });
                 
-                document.getElementById('totalUsers').innerText = '-';
-                document.getElementById('activeUsers').innerText = '-';
-                document.getElementById('todayLogins').innerText = '-';
-                document.getElementById('totalGames').innerText = '-';
-                
-                // You'll need to add these endpoints to your worker
+                if (response.ok) {
+                    const stats = await response.json();
+                    
+                    document.getElementById('totalUsers').innerText = stats.totalUsers;
+                    document.getElementById('activeUsers').innerText = stats.activeUsers;
+                    document.getElementById('todayLogins').innerText = stats.todayLogins;
+                    document.getElementById('totalGames').innerText = stats.totalGames;
+                } else {
+                    console.error('Failed to load stats');
+                }
             } catch (error) {
                 console.error('Error loading stats:', error);
             }
@@ -616,8 +621,51 @@
             const container = document.getElementById('gamesTable');
             container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading games...</p></div>';
             
-            // You need to add /admin/list-games endpoint to worker
-            container.innerHTML = '<div class="alert alert-error">Add /admin/list-games endpoint to worker first.</div>';
+            try {
+                const response = await fetch(API_URL + '/admin/list-games', {
+                    headers: { 'x-api-key': API_KEY }
+                });
+                
+                if (!response.ok) {
+                    container.innerHTML = '<div class="alert alert-error">Failed to load games.</div>';
+                    return;
+                }
+                
+                const games = await response.json();
+                
+                if (games.length === 0) {
+                    container.innerHTML = '<p>No games found.</p>';
+                    return;
+                }
+                
+                let html = '<table><thead><tr><th>Place ID</th><th>Game Name</th><th>Version</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>';
+                
+                games.forEach(game => {
+                    const statusBadge = game.is_active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-expired">Inactive</span>';
+                    const created = new Date(game.created_at).toLocaleDateString();
+                    
+                    html += `
+                        <tr>
+                            <td><code>${game.place_id}</code></td>
+                            <td>${game.game_name}</td>
+                            <td>${game.version}</td>
+                            <td>${statusBadge}</td>
+                            <td>${created}</td>
+                            <td>
+                                <button onclick="toggleGame('${game.place_id}', ${!game.is_active})" style="padding: 5px 10px; font-size: 0.85em;">
+                                    ${game.is_active ? 'Disable' : 'Enable'}
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                container.innerHTML = '<div class="alert alert-error">Error: ' + error.message + '</div>';
+            }
         }
 
         // Add game
@@ -632,8 +680,40 @@
                 return;
             }
             
-            // You need to add /admin/add-game endpoint to worker
-            document.getElementById('gameResult').innerHTML = '<div class="alert alert-error">Add /admin/add-game endpoint to worker first.</div>';
+            try {
+                const response = await fetch(API_URL + '/admin/add-game', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        placeId: placeId,
+                        gameName: gameName,
+                        scriptUrl: scriptUrl,
+                        version: version
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('gameResult').innerHTML = '<div class="alert alert-success">✅ Game added successfully!</div>';
+                    
+                    // Clear form
+                    document.getElementById('newPlaceId').value = '';
+                    document.getElementById('newGameName').value = '';
+                    document.getElementById('newScriptUrl').value = '';
+                    document.getElementById('newVersion').value = '1.0';
+                    
+                    // Reload games
+                    setTimeout(loadGames, 2000);
+                } else {
+                    document.getElementById('gameResult').innerHTML = '<div class="alert alert-error">❌ ' + result.message + '</div>';
+                }
+            } catch (error) {
+                document.getElementById('gameResult').innerHTML = '<div class="alert alert-error">❌ Error: ' + error.message + '</div>';
+            }
         }
 
         // Load logs
@@ -643,8 +723,52 @@
             
             container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading logs...</p></div>';
             
-            // You need to add /admin/logs endpoint to worker
-            container.innerHTML = '<div class="alert alert-error">Add /admin/logs endpoint to worker first.</div>';
+            try {
+                let url = API_URL + '/admin/logs';
+                if (filterUserId) {
+                    url += '?userId=' + filterUserId;
+                }
+                
+                const response = await fetch(url, {
+                    headers: { 'x-api-key': API_KEY }
+                });
+                
+                if (!response.ok) {
+                    container.innerHTML = '<div class="alert alert-error">Failed to load logs.</div>';
+                    return;
+                }
+                
+                const logs = await response.json();
+                
+                if (logs.length === 0) {
+                    container.innerHTML = '<p>No logs found.</p>';
+                    return;
+                }
+                
+                let html = '<table><thead><tr><th>Timestamp</th><th>User ID</th><th>Place ID</th><th>HWID</th><th>Status</th><th>Error</th></tr></thead><tbody>';
+                
+                logs.forEach(log => {
+                    const timestamp = new Date(log.timestamp).toLocaleString();
+                    const statusBadge = log.success ? '<span class="badge badge-active">Success</span>' : '<span class="badge badge-expired">Failed</span>';
+                    
+                    html += `
+                        <tr>
+                            <td>${timestamp}</td>
+                            <td><code>${log.user_id}</code></td>
+                            <td>${log.place_id || 'N/A'}</td>
+                            <td>${log.hwid ? log.hwid.substring(0, 10) + '...' : 'N/A'}</td>
+                            <td>${statusBadge}</td>
+                            <td>${log.error_message || '-'}</td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                container.innerHTML = '<div class="alert alert-error">Error: ' + error.message + '</div>';
+            }
         }
     </script>
 </body>
