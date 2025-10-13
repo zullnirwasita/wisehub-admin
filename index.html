@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"="width=device-width, initial-scale=1.0">
+    <title>Wise Hub Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-section {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .dashboard {
+            display: none;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .stat-card h3 {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #0ea5e9;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            background: #334155;
+            border: none;
+            border-radius: 8px;
+            color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #475569;
+        }
+        
+        .tab.active {
+            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+        }
+        
+        .tab-content {
+            display: none;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 1em;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0ea5e9;
+        }
+        
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #475569;
+        }
+        
+        th {
+            background: #0f172a;
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+        
+        tr:hover {
+            background: #334155;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        
+        .badge-premium { background: #f59e0b; color: #000; }
+        .badge-basic { background: #6b7280; color: #fff; }
+        .badge-vip { background: #8b5cf6; color: #fff; }
+        .badge-active { background: #10b981; color: #fff; }
+        .badge-expired { background: #ef4444; color: #fff; }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #94a3b8;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success { background: #10b981; }
+        .alert-error { background: #ef4444; }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .spinner {
+            border: 4px solid #334155;
+            border-top: 4px solid #0ea5e9;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div class="login-section" id="loginSection">
+        <h1>🛡️ Wise Hub Admin</h1>
+        <div class="form-group">
+            <label>API URL</label>
+            <input type="text" id="apiUrl" placeholder="https://wisehub-api.workers.dev">
+        </div>
+        <div class="form-group">
+            <label>API Key</label>
+            <input type="password" id="apiKey" placeholder="Your API Secret Key">
+        </div>
+        <button onclick="login()">Login</button>
+        <div id="loginError" style="color: #ef4444; margin-top: 15px;"></div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="container dashboard" id="dashboard">
+        <h1>🛡️ Wise Hub Admin Panel</h1>
+        
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="value" id="totalUsers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Users</h3>
+                <div class="value" id="activeUsers">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Logins Today</h3>
+                <div class="value" id="todayLogins">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Supported Games</h3>
+                <div class="value" id="totalGames">0</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('users')">👥 Users</button>
+            <button class="tab" onclick="switchTab('add')">➕ Add User</button>
+            <button class="tab" onclick="switchTab('games')">🎮 Games</button>
+            <button class="tab" onclick="switchTab('logs')">📊 Logs</button>
+        </div>
+
+        <!-- Tab: Users List -->
+        <div class="tab-content active" id="tab-users">
+            <h2>VIP Users Management</h2>
+            <div id="usersTable"></div>
+        </div>
+
+        <!-- Tab: Add User -->
+        <div class="tab-content" id="tab-add">
+            <h2>Add New VIP User</h2>
+            <div class="form-group">
+                <label>Roblox User ID</label>
+                <input type="text" id="newUserId" placeholder="123456789">
+            </div>
+            <div class="form-group">
+                <label>Username (Optional)</label>
+                <input type="text" id="newUsername" placeholder="PlayerName">
+            </div>
+            <div class="form-group">
+                <label>Custom Key (leave empty for auto-generate)</label>
+                <input type="text" id="newKey" placeholder="WISE-CUSTOM-KEY">
+            </div>
+            <div class="form-group">
+                <label>Tier</label>
+                <select id="newTier">
+                    <option value="basic">Basic</option>
+                    <option value="premium">Premium</option>
+                    <option value="vip">VIP</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Duration (Days)</label>
+                <input type="number" id="newDays" value="30">
+            </div>
+            <button onclick="addUser()">Add User</button>
+            <div id="addResult"></div>
+        </div>
+
+        <!-- Tab: Games -->
+        <div class="tab-content" id="tab-games">
+            <h2>Supported Games</h2>
+            <div id="gamesTable"></div>
+            
+            <h3 style="margin-top: 40px;">Add New Game</h3>
+            <div class="form-group">
+                <label>Place ID</label>
+                <input type="text" id="newPlaceId" placeholder="606849621">
+            </div>
+            <div class="form-group">
+                <label>Game Name</label>
+                <input type="text" id="newGameName" placeholder="Jailbreak">
+            </div>
+            <div class="form-group">
+                <label>Script URL (GitHub Raw)</label>
+                <input type="text" id="newScriptUrl" placeholder="https://raw.githubusercontent.com/...">
+            </div>
+            <div class="form-group">
+                <label>Version</label>
+                <input type="text" id="newVersion" value="1.0" placeholder="1.0">
+            </div>
+            <button onclick="addGame()">Add Game</button>
+            <div id="gameResult"></div>
+        </div>
+
+        <!-- Tab: Logs -->
+        <div class="tab-content" id="tab-logs">
+            <h2>Login Activity Logs</h2>
+            <div class="form-group">
+                <label>Filter by User ID (optional)</label>
+                <input type="text" id="filterUserId" placeholder="Enter User ID">
+                <button onclick="loadLogs()">Filter</button>
+            </div>
+            <div id="logsTable"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let API_URL = '';
+        let API_KEY = '';
+        let SUPABASE_URL = '';
+        let SUPABASE_KEY = '';
+
+        // Login function
+        async function login() {
+            API_URL = document.getElementById('apiUrl').value.trim();
+            API_KEY = document.getElementById('apiKey').value.trim();
+            
+            if (!API_URL || !API_KEY) {
+                document.getElementById('loginError').innerText = '❌ Please fill all fields!';
+                return;
+            }
+
+            try {
+                // Test connection
+                const response = await fetch(API_URL, {
+                    headers: { 'x-api-key': API_KEY }
+                });
+
+                if (response.ok) {
+                    // Save credentials
+                    localStorage.setItem('apiUrl', API_URL);
+                    localStorage.setItem('apiKey', API_KEY);
+                    
+                    // Show dashboard
+                    document.getElementById('loginSection').style.display = 'none';
+                    document.getElementById('dashboard').style.display = 'block';
+                    
+                    // Load data
+                    await loadDashboard();
+                } else {
+                    document.getElementById('loginError').innerText = '❌ Invalid API credentials!';
+                }
+            } catch (error) {
+                document.getElementById('loginError').innerText = '❌ Connection failed: ' + error.message;
+            }
+        }
+
+        // Auto-login if credentials saved
+        window.onload = function() {
+            const savedUrl = localStorage.getItem('apiUrl');
+            const savedKey = localStorage.getItem('apiKey');
+            
+            if (savedUrl && savedKey) {
+                document.getElementById('apiUrl').value = savedUrl;
+                document.getElementById('apiKey').value = savedKey;
+            }
+        };
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById('tab-' + tabName).classList.add('active');
+            
+            // Load data for specific tabs
+            if (tabName === 'users') loadUsers();
+            if (tabName === 'games') loadGames();
+            if (tabName === 'logs') loadLogs();
+        }
+
+        // Load dashboard
+        async function loadDashboard() {
+            await loadStats();
+            await loadUsers();
+        }
+
+        // Supabase API helper
+        async function supabaseQuery(table, filters = '', method = 'GET', body = null) {
+            // Extract Supabase URL from API_URL if it's a worker
+            // For now, we'll use direct Supabase access
+            // You need to add Supabase credentials in the worker or here
+            
+            // Since we're using Cloudflare Workers, we'll proxy through it
+            // This is a simplified version - you may need to add more endpoints
+            
+            alert('Note: Direct Supabase queries not implemented yet. Use API endpoints.');
+            return [];
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                // These would come from dedicated endpoints
+                // For now, using placeholder values
+                
+                document.getElementById('totalUsers').innerText = '-';
+                document.getElementById('activeUsers').innerText = '-';
+                document.getElementById('todayLogins').innerText = '-';
+                document.getElementById('totalGames').innerText = '-';
+                
+                // You'll need to add these endpoints to your worker
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            const container = document.getElementById('usersTable');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading users...</p></div>';
+            
+            try {
+                // This requires a new endpoint in your worker: /admin/list-users
+                const response = await fetch(API_URL + '/admin/list-users', {
+                    headers: { 'x-api-key': API_KEY }
+                });
+                
+                if (!response.ok) {
+                    container.innerHTML = '<div class="alert alert-error">Failed to load users. Add /admin/list-users endpoint to worker.</div>';
+                    return;
+                }
+                
+                const users = await response.json();
+                
+                if (users.length === 0) {
+                    container.innerHTML = '<p>No users found.</p>';
+                    return;
+                }
+                
+                let html = '<table><thead><tr><th>User ID</th><th>Username</th><th>Key</th><th>Tier</th><th>Expiry</th><th>HWID</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+                
+                users.forEach(user => {
+                    const expiry = new Date(user.expiry_date);
+                    const isExpired = expiry < new Date();
+                    const statusBadge = isExpired ? '<span class="badge badge-expired">Expired</span>' : '<span class="badge badge-active">Active</span>';
+                    const tierBadge = `<span class="badge badge-${user.tier}">${user.tier.toUpperCase()}</span>`;
+                    
+                    html += `
+                        <tr>
+                            <td>${user.user_id}</td>
+                            <td>${user.username || 'N/A'}</td>
+                            <td><code>${user.key}</code></td>
+                            <td>${tierBadge}</td>
+                            <td>${expiry.toLocaleDateString()}</td>
+                            <td>${user.hwid ? '🔒 Locked' : '🔓 Unlocked'}</td>
+                            <td>${statusBadge}</td>
+                            <td>
+                                <button onclick="resetHWID('${user.user_id}')" style="padding: 5px 10px; font-size: 0.85em;">Reset HWID</button>
+                                <button onclick="deleteUser('${user.user_id}')" class="btn-danger" style="padding: 5px 10px; font-size: 0.85em;">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                html += '</tbody></table>';
+                container.innerHTML = html;
+                
+            } catch (error) {
+                container.innerHTML = '<div class="alert alert-error">Error: ' + error.message + '</div>';
+            }
+        }
+
+        // Add user
+        async function addUser() {
+            const userId = document.getElementById('newUserId').value.trim();
+            const username = document.getElementById('newUsername').value.trim();
+            const key = document.getElementById('newKey').value.trim();
+            const tier = document.getElementById('newTier').value;
+            const days = parseInt(document.getElementById('newDays').value);
+            
+            if (!userId || !days) {
+                document.getElementById('addResult').innerHTML = '<div class="alert alert-error">User ID and Days are required!</div>';
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_URL + '/admin/add-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        username: username || null,
+                        key: key || null,
+                        tier: tier,
+                        days: days
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('addResult').innerHTML = '<div class="alert alert-success">✅ User added successfully!</div>';
+                    
+                    // Clear form
+                    document.getElementById('newUserId').value = '';
+                    document.getElementById('newUsername').value = '';
+                    document.getElementById('newKey').value = '';
+                    document.getElementById('newDays').value = '30';
+                    
+                    // Reload users list
+                    setTimeout(() => {
+                        switchTab('users');
+                    }, 2000);
+                } else {
+                    document.getElementById('addResult').innerHTML = '<div class="alert alert-error">❌ ' + result.message + '</div>';
+                }
+            } catch (error) {
+                document.getElementById('addResult').innerHTML = '<div class="alert alert-error">❌ Error: ' + error.message + '</div>';
+            }
+        }
+
+        // Reset HWID
+        async function resetHWID(userId) {
+            if (!confirm('Reset HWID for user ' + userId + '?')) return;
+            
+            try {
+                const response = await fetch(API_URL + '/admin/reset-hwid', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify({ userId: userId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ HWID reset successfully!');
+                    loadUsers();
+                } else {
+                    alert('❌ Failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Delete user
+        async function deleteUser(userId) {
+            if (!confirm('Delete user ' + userId + '? This cannot be undone!')) return;
+            
+            try {
+                const response = await fetch(API_URL + '/admin/remove-user', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': API_KEY
+                    },
+                    body: JSON.stringify({ userId: userId })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('✅ User deleted successfully!');
+                    loadUsers();
+                } else {
+                    alert('❌ Failed: ' + result.message);
+                }
+            } catch (error) {
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Load games
+        async function loadGames() {
+            const container = document.getElementById('gamesTable');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading games...</p></div>';
+            
+            // You need to add /admin/list-games endpoint to worker
+            container.innerHTML = '<div class="alert alert-error">Add /admin/list-games endpoint to worker first.</div>';
+        }
+
+        // Add game
+        async function addGame() {
+            const placeId = document.getElementById('newPlaceId').value.trim();
+            const gameName = document.getElementById('newGameName').value.trim();
+            const scriptUrl = document.getElementById('newScriptUrl').value.trim();
+            const version = document.getElementById('newVersion').value.trim();
+            
+            if (!placeId || !gameName || !scriptUrl) {
+                document.getElementById('gameResult').innerHTML = '<div class="alert alert-error">All fields are required!</div>';
+                return;
+            }
+            
+            // You need to add /admin/add-game endpoint to worker
+            document.getElementById('gameResult').innerHTML = '<div class="alert alert-error">Add /admin/add-game endpoint to worker first.</div>';
+        }
+
+        // Load logs
+        async function loadLogs() {
+            const container = document.getElementById('logsTable');
+            const filterUserId = document.getElementById('filterUserId').value.trim();
+            
+            container.innerHTML = '<div class="loading"><div class="spinner"></div><p>Loading logs...</p></div>';
+            
+            // You need to add /admin/logs endpoint to worker
+            container.innerHTML = '<div class="alert alert-error">Add /admin/logs endpoint to worker first.</div>';
+        }
+    </script>
+</body>
+</html>
