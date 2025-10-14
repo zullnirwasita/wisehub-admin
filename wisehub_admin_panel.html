@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wise Hub Admin Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #0ea5e9;
+        }
+        
+        h3 {
+            color: #64748b;
+            margin-top: 20px;
+        }
+        
+        .login-section {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #1e293b;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .dashboard {
+            display: none;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            border-left: 4px solid #0ea5e9;
+        }
+        
+        .stat-card h3 {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #0ea5e9;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 12px 25px;
+            background: #334155;
+            border: none;
+            border-radius: 8px;
+            color: #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+        
+        .tab:hover {
+            background: #475569;
+        }
+        
+        .tab.active {
+            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+        }
+        
+        .tab-content {
+            display: none;
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #0f172a;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            color: #f1f5f9;
+            font-size: 1em;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0ea5e9;
+        }
+        
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+        }
+        
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 0.85em;
+            margin: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            overflow-x: auto;
+            display: block;
+        }
+        
+        thead, tbody {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #475569;
+            word-wrap: break-word;
+        }
+        
+        th {
+            background: #0f172a;
+            color: #0ea5e9;
+            font-weight: bold;
+        }
+        
+        tbody tr:hover {
+            background: #334155;
+        }
+        
+        .badge {
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: bold;
+            display: inline-block;
+        }
+        
+        .badge-premium { background: #f59e0b; color: #000; }
+        .badge-basic { background: #6b7280; color: #fff; }
+        .badge-vip { background: #8b5cf6; color: #fff; }
+        .badge-active { background: #10b981; color: #fff; }
+        .badge-expired { background: #ef4444; color: #fff; }
+        .badge-true { background: #10b981; color: #fff; }
+        .badge-false { background: #6b7280; color: #fff; }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #94a3b8;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success { 
+            background: #10b981;
+            color: white;
+        }
+        .alert-error { 
+            background: #ef4444;
+            color: white;
+        }
+        .alert-info { 
+            background: #334155;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+        
+        .spinner {
+            border: 4px solid #334155;
+            border-top: 4px solid #0ea5e9;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        code {
+            background: #0f172a;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #0ea5e9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        
+        .action-buttons button {
+            padding: 5px 10px;
+            font-size: 0.85em;
+            margin: 0;
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #ef4444;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+
+        .info-text {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .action-buttons button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Section -->
+    <div class="login-section" id="loginSection">
+        <h1>🛡️ Wise Hub Admin</h1>
+        <div class="form-group">
+            <label>API URL</label>
+            <input type="text" id="apiUrl" placeholder="https://wisehub-api.workers.dev" value="">
+        </div>
+        <div class="form-group">
+            <label>API Key</label>
+            <input type="password" id="apiKey" placeholder="Your API Secret Key" value="">
+        </div>
+        <button onclick="login()">Login</button>
+        <div id="loginError" style="color: #ef4444; margin-top: 15px;"></div>
+    </div>
+
+    <!-- Dashboard -->
+    <div class="container dashboard" id="dashboard">
+        <button class="logout-btn" onclick="logout()">Logout</button>
+        
+        <h1>🛡️ Wise Hub Admin Panel</h1>
+        
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Users</h3>
+                <div class="value" id="totalUsers">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Active Users</h3>
+                <div class="value" id="activeUsers">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Total Logins Today</h3>
+                <div class="value" id="todayLogins">-</div>
+            </div>
+            <div class="stat-card">
+                <h3>Supported Games</h3>
+                <div class="value" id="totalGames">-</div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('users')">👥 Users</button>
+            <button class="tab" onclick="switchTab('add')">➕ Add User</button>
+            <button class="tab" onclick="switchTab('games')">🎮 Games</button>
+            <button class="tab" onclick="switchTab('logs')">📊 Logs</button>
+            <button class="tab" onclick="switchTab('backup')">💾 Backup</button>
+        </div>
+
+        <!-- Tab: Users List -->
+        <div class="tab-content active" id="tab-users">
+            <h2>VIP Users Management</h2>
+            <button onclick="loadUsers()" class="btn-secondary">🔄 Refresh</button>
+            <div id="usersTable"></div>
+        </div>
+
+        <!-- Tab: Add User -->
+        <div class="tab-content" id="tab-add">
+            <h2>Add New VIP User</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="form-group">
+                        <label>Roblox User ID</label>
+                        <input type="text" id="newUserId" placeholder="123456789">
+                    </div>
+                    <div class="form-group">
+                        <label>Username (Optional)</label>
+                        <input type="text" id="newUsername" placeholder="PlayerName">
+                    </div>
+                    <div class="form-group">
+                        <label>Tier</label>
+                        <select id="newTier">
+                            <option value="basic">Basic</option>
+                            <option value="premium">Premium</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Custom Key (leave empty for auto-generate)</label>
+                        <input type="text" id="newKey" placeholder="WISE-CUSTOM-KEY">
+                        <button onclick="generateRandomKey()" class="btn-secondary">🎲 Generate Key</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (Days)</label>
+                        <input type="number" id="newDays" value="30" min="1">
+                    </div>
+                </div>
+            </div>
+            <button onclick="addUser()">➕ Add User</button>
+            <div id="addResult"></div>
+        </div>
+
+        <!-- Tab: Games -->
+        <div class="tab-content" id="tab-games">
+            <h2>Supported Games</h2>
+            <button onclick="loadGames()" class="btn-secondary">🔄 Refresh</button>
+            <div id="gamesTable"></div>
+            
+            <h3>Add New Game</h3>
+            <div class="grid-2">
+                <div>
+                    <div class="form-group">
+                        <label>Place ID</label>
+                        <input type="text" id="newPlaceId" placeholder="606849621">
+                    </div>
+                    <div class="form-group">
+                        <label>Game Name</label>
+                        <input type="text" id="newGameName" placeholder="Jailbreak">
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Script URL (GitHub Raw)</label>
+                        <input type="text" id="newScriptUrl" placeholder="https://raw.githubusercontent.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>Version</label>
+                        <input type="text" id="newVersion" value="1.0" placeholder="1.0">
+                    </div>
+                </div>
+            </div>
+            <button onclick="addGame()">🎮 Add Game</button>
+            <div id="gameResult"></div>
+        </div>
+
+        <!-- Tab: Logs -->
+        <div class="tab-content" id="tab-logs">
+            <h2>Login Activity Logs</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="form-group">
+                        <label>Filter by User ID (optional)</label>
+                        <input type="text" id="filterUserId" placeholder="Enter User ID">
+                    </div>
+                </div>
+                <div>
+                    <label>&nbsp;</label>
+                    <button onclick="loadLogs()">🔍 Filter</button>
+                    <button onclick="clearLogsFilter()" class="btn-secondary">Clear</button>
+                </div>
+            </div>
+            <div id="logsTable"></div>
+        </div>
+        
+        <!-- Tab: Backup -->
+        <div class="tab-content" id="tab-backup">
+            <h2>Backup & Restore</h2>
+            <p class="info-text">Download backup dari semua data (users, games, logs)</p>
+            <button onclick="downloadBackup()">💾 Download Backup</button>
+            <div id="backupResult"></div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let API_URL = '';
+        let API_KEY = '';
+
+        // Generate random key
+        function generateRandomKey() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let key = 'WISE-';
+            for (let i = 0; i < 8; i++) {
+                key += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            document.getElementById('newKey').value = key;
+        }
+
+        // API Call Helper
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': API_KEY
+                }
+            };
+
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+
+            const response = await fetch(API_URL + endpoint, options);
+            const data = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(data.message || data.error || 'API Error');
+            }
+
+            return data;
+        }
+
+        // Show alert
+        function showAlert(id, message, type = 'success') {
+            const elem = document.getElementById(id);
+            if (elem) {
+                elem.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+                setTimeout(() => {
+                    elem.innerHTML = '';
+                }, 5000);
+            }
+        }
+
+        // Login function
+        async function login() {
+            API_URL = document.getElementById('apiUrl').value.trim();
+            API_KEY = document.getElementById('apiKey').value.trim();
+
+            if (!API_URL || !API_KEY) {
+                document.getElementById('loginError').textContent = 'API URL dan Key harus diisi!';
+                return;
+            }
+
+            try {
+                document.getElementById('loginError').textContent = 'Authenticating...';
+                await apiCall('/admin/list-users');
+                
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('loginError').textContent = '';
+                
+                loadStats();
+                loadUsers();
+                loadGames();
+            } catch (error) {
+                document.getElementById('loginError').textContent = '❌ Login gagal: ' + error.message;
+            }
+        }
+
+        // Logout function
+        function logout() {
+            API_URL = '';
+            API_KEY = '';
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('apiUrl').value = '';
+            document.getElementById('apiKey').value = '';
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const stats = await apiCall('/admin/stats');
+                document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('activeUsers').textContent = stats.activeUsers || 0;
+                document.getElementById('todayLogins').textContent = stats.todayLogins || 0;
+                document.getElementById('totalGames').textContent = stats.totalGames || 0;
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const users = await apiCall('/admin/list-users');
+                let html = '<table><thead><tr><th>User ID</th><th>Username</th><th>Tier</th><th>Key</th><th>Expiry</th><th>Active</th><th>HWID</th><th>Logins</th><th>Actions</th></tr></thead><tbody>';
+                
+                if (Array.isArray(users) && users.length > 0) {
+                    users.forEach(user => {
+                        const expiry = new Date(user.expiry_date);
+                        const isExpired = expiry < new Date();
+                        const tierBadge = `badge-${user.tier}`;
+                        const activeBadge = user.is_active ? 'badge-true' : 'badge-false';
+                        
+                        html += `
+                            <tr>
+                                <td><code>${user.user_id}</code></td>
+                                <td>${user.username || 'N/A'}</td>
+                                <td><span class="badge ${tierBadge}">${user.tier.toUpperCase()}</span></td>
+                                <td><code>${user.key}</code></td>
+                                <td>${expiry.toLocaleDateString()} ${isExpired ? '<span class="badge badge-expired">EXPIRED</span>' : ''}</td>
+                                <td><span class="badge ${activeBadge}">${user.is_active ? 'YES' : 'NO'}</span></td>
+                                <td>${user.hwid ? '<code>' + user.hwid.substring(0, 8) + '...</code>' : 'Not Set'}</td>
+                                <td>${user.login_count || 0}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-small" onclick="resetHWID('${user.user_id}')">Reset HWID</button>
+                                        <button class="btn-small btn-danger" onclick="removeUser('${user.user_id}')">Delete</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += '<tr><td colspan="9" style="text-align: center; color: #94a3b8;">No users found</td></tr>';
+                }
+                
+                html += '</tbody></table>';
+                document.getElementById('usersTable').innerHTML = html;
+            } catch (error) {
+                document.getElementById('usersTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Add user
+        async function addUser() {
+            const userId = document.getElementById('newUserId').value.trim();
+            const username = document.getElementById('newUsername').value.trim();
+            const key = document.getElementById('newKey').value.trim();
+            const tier = document.getElementById('newTier').value;
+            const days = document.getElementById('newDays').value;
+
+            if (!userId || !days) {
+                showAlert('addResult', 'User ID dan Days harus diisi!', 'error');
+                return;
+            }
+
+            try {
+                const result = await apiCall('/admin/add-user', 'POST', {
+                    userId,
+                    username: username || undefined,
+                    key: key || undefined,
+                    tier,
+                    days: parseInt(days)
+                });
+
+                showAlert('addResult', `✅ User ${userId} berhasil ditambahkan!`, 'success');
+                document.getElementById('newUserId').value = '';
+                document.getElementById('newUsername').value = '';
+                document.getElementById('newKey').value = '';
+                document.getElementById('newDays').value = '30';
+                
+                loadUsers();
+                loadStats();
+            } catch (error) {
+                showAlert('addResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Remove user
+        async function removeUser(userId) {
+            if (!confirm(`Hapus user ${userId}?`)) return;
+
+            try {
+                await apiCall('/admin/remove-user', 'POST', { userId });
+                showAlert('usersTable', `✅ User ${userId} berhasil dihapus!`, 'success');
+                loadUsers();
+                loadStats();
+            } catch (error) {
+                showAlert('usersTable', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Reset HWID
+        async function resetHWID(userId) {
+            if (!confirm(`Reset HWID untuk user ${userId}?`)) return;
+
+            try {
+                await apiCall('/admin/reset-hwid', 'POST', { userId });
+                showAlert('usersTable', `✅ HWID ${userId} berhasil direset!`, 'success');
+                loadUsers();
+            } catch (error) {
+                showAlert('usersTable', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load games
+        async function loadGames() {
+            try {
+                const games = await apiCall('/admin/list-games');
+                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Active</th><th>Script URL</th><th>Actions</th></tr></thead><tbody>';
+                
+                if (Array.isArray(games) && games.length > 0) {
+                    games.forEach(game => {
+                        const activeBadge = game.is_active ? 'badge-true' : 'badge-false';
+                        const status = game.is_active ? 'Disable' : 'Enable';
+                        
+                        html += `
+                            <tr>
+                                <td>${game.game_name}</td>
+                                <td><code>${game.place_id}</code></td>
+                                <td>${game.version || '1.0'}</td>
+                                <td><span class="badge ${activeBadge}">${game.is_active ? 'YES' : 'NO'}</span></td>
+                                <td><a href="${game.script_url}" target="_blank" style="color: #0ea5e9;">View</a></td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-small" onclick="toggleGame('${game.place_id}', ${!game.is_active})">${status}</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += '<tr><td colspan="6" style="text-align: center; color: #94a3b8;">No games found</td></tr>';
+                }
+                
+                html += '</tbody></table>';
+                document.getElementById('gamesTable').innerHTML = html;
+            } catch (error) {
+                document.getElementById('gamesTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Add game
+        async function addGame() {
+            const placeId = document.getElementById('newPlaceId').value.trim();
+            const gameName = document.getElementById('newGameName').value.trim();
+            const scriptUrl = document.getElementById('newScriptUrl').value.trim();
+            const version = document.getElementById('newVersion').value.trim();
+
+            if (!placeId || !gameName || !scriptUrl) {
+                showAlert('gameResult', 'Place ID, Game Name, dan Script URL harus diisi!', 'error');
+                return;
+            }
+
+            try {
+                const result = await apiCall('/admin/add-game', 'POST', {
+                    placeId,
+                    gameName,
+                    scriptUrl,
+                    version: version || '1.0'
+                });
+
+                showAlert('gameResult', `✅ Game ${gameName} berhasil ditambahkan!`, 'success');
+                document.getElementById('newPlaceId').value = '';
+                document.getElementById('newGameName').value = '';
+                document.getElementById('newScriptUrl').value = '';
+                document.getElementById('newVersion').value = '1.0';
+                
+                loadGames();
+                loadStats();
+            } catch (error) {
+                showAlert('gameResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Toggle game
+        async function toggleGame(placeId, isActive) {
+            try {
+                await apiCall('/admin/toggle-game', 'POST', { placeId, isActive });
+                showAlert('gamesTable', `✅ Game ${isActive ? 'diaktifkan' : 'dinonaktifkan'}!`, 'success');
+                loadGames();
+                loadStats();
+            } catch (error) {
+                showAlert('gamesTable', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load logs
+        async function loadLogs() {
+            try {
+                const userId = document.getElementById('filterUserId').value.trim();
+                const endpoint = userId ? `/admin/logs?userId=${userId}` : '/admin/logs';
+                const logs = await apiCall(endpoint);
+                
+                let html = '<table><thead><tr><th>Timestamp</th><th>User ID</th><th>Place ID</th><th>HWID</th><th>Success</th><th>Error Message</th></tr></thead><tbody>';
+                
+                if (Array.isArray(logs) && logs.length > 0) {
+                    logs.forEach(log => {
+                        const successBadge = log.success ? 'badge-true' : 'badge-false';
+                        const time = new Date(log.timestamp).toLocaleString();
+                        
+                        html += `
+                            <tr>
+                                <td>${time}</td>
+                                <td><code>${log.user_id}</code></td>
+                                <td><code>${log.place_id}</code></td>
+                                <td>${log.hwid ? '<code>' + log.hwid.substring(0, 8) + '...</code>' : 'N/A'}</td>
+                                <td><span class="badge ${successBadge}">${log.success ? 'YES' : 'NO'}</span></td>
+                                <td>${log.error_message || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += '<tr><td colspan="6" style="text-align: center; color: #94a3b8;">No logs found</td></tr>';
+                }
+                
+                html += '</tbody></table>';
+                document.getElementById('logsTable').innerHTML = html;
+            } catch (error) {
+                document.getElementById('logsTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Clear logs filter
+        function clearLogsFilter() {
+            document.getElementById('filterUserId').value = '';
+            loadLogs();
+        }
+
+        // Download backup
+        async function downloadBackup() {
+            try {
+                const response = await fetch(API_URL + '/admin/backup', {
+                    headers: {
+                        'x-api-key': API_KEY
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to download backup');
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `wisehub-backup-${Date.now()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showAlert('backupResult', '✅ Backup berhasil diunduh!', 'success');
+            } catch (error) {
+                showAlert('backupResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Switch tab
+        function switchTab(tabName) {
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.tab');
+            buttons.forEach(btn => btn.classList.remove('active'));
+
+            // Show selected tab
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+
+            // Add active class to clicked button
+            event.target.classList.add('active');
+
+            // Load data for specific tabs
+            if (tabName === 'users') {
+                loadUsers();
+            } else if (tabName === 'games') {
+                loadGames();
+            } else if (tabName === 'logs') {
+                loadLogs();
+            }
+        }
+
+        // Auto-load stats every 30 seconds
+        setInterval(() => {
+            if (document.getElementById('dashboard').style.display !== 'none') {
+                loadStats();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
