@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wise Hub Admin Panel</title>
+    <title>Admin Panel</title>
     <style>
         * {
             margin: 0;
@@ -11,52 +11,151 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --dark-lighter: #334155;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+        
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #f1f5f9;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: var(--text);
             min-height: 100vh;
-            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
+            animation: bgMove 20s ease infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        @keyframes bgMove {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
         }
         
         .container {
+            position: relative;
+            z-index: 1;
             max-width: 1400px;
             margin: 0 auto;
+            padding: 20px;
         }
         
-        h1 {
+        /* Glassmorphism Cards */
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Login Section */
+        .login-section {
+            max-width: 450px;
+            margin: 100px auto;
+            padding: 40px;
+            animation: fadeInUp 0.6s ease;
+        }
+        
+        .login-section h1 {
             text-align: center;
-            margin-bottom: 30px;
             font-size: 2.5em;
-            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
         
-        h2 {
-            margin-bottom: 20px;
-            color: #0ea5e9;
+        .login-section p {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 30px;
         }
         
-        h3 {
-            color: #64748b;
-            margin-top: 20px;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
-        .login-section {
-            max-width: 400px;
-            margin: 100px auto;
-            background: #1e293b;
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-        
+        /* Dashboard */
         .dashboard {
             display: none;
+            animation: fadeIn 0.5s ease;
         }
         
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logout-btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        /* Stats Grid */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -65,302 +164,508 @@
         }
         
         .stat-card {
-            background: #1e293b;
             padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            border-left: 4px solid #0ea5e9;
+            position: relative;
+            overflow: hidden;
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
         }
         
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+        }
+        
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; transform: translateX(-20px); }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; transform: translateX(-20px); }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; transform: translateX(-20px); }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; transform: translateX(-20px); }
+        
         .stat-card h3 {
-            color: #94a3b8;
+            color: var(--text-muted);
             font-size: 0.9em;
+            font-weight: 500;
             margin-bottom: 10px;
-            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         
         .stat-card .value {
             font-size: 2.5em;
-            font-weight: bold;
-            color: #0ea5e9;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: countUp 1s ease;
         }
         
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stat-card .icon {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2em;
+            opacity: 0.3;
+        }
+        
+        /* Tabs */
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            padding: 10px;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .tab {
-            padding: 12px 25px;
-            background: #334155;
-            border: none;
-            border-radius: 8px;
-            color: #f1f5f9;
+            padding: 12px 24px;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 1em;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transition: left 0.3s ease;
+            z-index: -1;
         }
         
         .tab:hover {
-            background: #475569;
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
         }
         
         .tab.active {
-            background: linear-gradient(90deg, #0ea5e9, #1e40af);
+            color: white;
+            border-color: transparent;
         }
         
+        .tab.active::before {
+            left: 0;
+        }
+        
+        /* Tab Content */
         .tab-content {
             display: none;
-            background: #1e293b;
             padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.5s ease;
         }
         
         .tab-content.active {
             display: block;
         }
         
-        input, select, textarea {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background: #0f172a;
-            border: 1px solid #475569;
-            border-radius: 8px;
-            color: #f1f5f9;
-            font-size: 1em;
+        .tab-content h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-size: 1.8em;
         }
         
-        input:focus, select:focus {
-            outline: none;
-            border-color: #0ea5e9;
-        }
-        
-        button {
-            padding: 12px 30px;
-            background: linear-gradient(90deg, #0ea5e9, #1e40af);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 1em;
-            cursor: pointer;
-            transition: transform 0.2s;
-            margin-top: 10px;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .btn-danger {
-            background: linear-gradient(90deg, #ef4444, #dc2626);
-        }
-        
-        .btn-secondary {
-            background: #6b7280;
-        }
-        
-        .btn-small {
-            padding: 5px 10px;
-            font-size: 0.85em;
-            margin: 0;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            overflow-x: auto;
-            display: block;
-        }
-        
-        thead, tbody {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-        
-        th, td {
-            padding: 15px;
-            text-align: left;
-            border-bottom: 1px solid #475569;
-            word-wrap: break-word;
-        }
-        
-        th {
-            background: #0f172a;
-            color: #0ea5e9;
-            font-weight: bold;
-        }
-        
-        tbody tr:hover {
-            background: #334155;
-        }
-        
-        .badge {
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.85em;
-            font-weight: bold;
-            display: inline-block;
-        }
-        
-        .badge-premium { background: #f59e0b; color: #000; }
-        .badge-basic { background: #6b7280; color: #fff; }
-        .badge-vip { background: #8b5cf6; color: #fff; }
-        .badge-active { background: #10b981; color: #fff; }
-        .badge-expired { background: #ef4444; color: #fff; }
-        .badge-true { background: #10b981; color: #fff; }
-        .badge-false { background: #6b7280; color: #fff; }
-        
+        /* Form Elements */
         .form-group {
             margin-bottom: 20px;
         }
         
         label {
             display: block;
-            margin-bottom: 5px;
-            color: #94a3b8;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .alert {
-            padding: 15px;
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        /* Buttons */
+        button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        button:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--dark-lighter), #475569);
+            box-shadow: 0 4px 15px rgba(71, 85, 105, 0.3);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+        
+        .btn-danger:hover {
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+        
+        .btn-success:hover {
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 0.85em;
+        }
+        
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            margin-top: 20px;
+            border-radius: 15px;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        th {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+        
+        tbody tr {
+            transition: all 0.3s ease;
+        }
+        
+        tbody tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transform: scale(1.01);
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 6px 12px;
             border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .badge-premium { background: linear-gradient(135deg, var(--warning), #d97706); color: white; }
+        .badge-basic { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+        .badge-vip { background: linear-gradient(135deg, var(--secondary), #7c3aed); color: white; }
+        .badge-active { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+        .badge-inactive { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+        
+        /* Alert */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
             margin-bottom: 20px;
+            animation: slideDown 0.5s ease;
+            border-left: 4px solid;
         }
         
-        .alert-success { 
-            background: #10b981;
-            color: white;
-        }
-        .alert-error { 
-            background: #ef4444;
-            color: white;
-        }
-        .alert-info { 
-            background: #334155;
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+            color: #6ee7b7;
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+            color: #fca5a5;
+        }
+        
+        .alert-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+            color: #93c5fd;
+        }
+        
+        /* Loading */
         .loading {
             text-align: center;
-            padding: 50px;
+            padding: 40px;
         }
         
         .spinner {
-            border: 4px solid #334155;
-            border-top: 4px solid #0ea5e9;
-            border-radius: 50%;
             width: 50px;
             height: 50px;
+            border: 4px solid rgba(59, 130, 246, 0.2);
+            border-top-color: var(--primary);
+            border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto;
+            margin: 0 auto 20px;
         }
         
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            to { transform: rotate(360deg); }
         }
         
+        /* Code */
         code {
-            background: #0f172a;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            color: #0ea5e9;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 5px;
-            flex-wrap: wrap;
-        }
-        
-        .action-buttons button {
-            padding: 5px 10px;
-            font-size: 0.85em;
-            margin: 0;
-        }
-        
-        .logout-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #ef4444;
-            padding: 10px 20px;
-            border-radius: 8px;
-            border: none;
-            color: white;
-            cursor: pointer;
-        }
-
-        .info-text {
-            color: #94a3b8;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'Fira Code', monospace;
+            color: var(--primary);
             font-size: 0.9em;
-            margin-top: 10px;
         }
-
+        
+        /* Grid */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        /* Kill Switch Special */
+        .kill-switch {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .kill-switch-toggle {
+            width: 60px;
+            height: 30px;
+            background: var(--danger);
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .kill-switch-toggle.active {
+            background: var(--success);
+        }
+        
+        .kill-switch-toggle::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        
+        .kill-switch-toggle.active::before {
+            left: 33px;
+        }
+        
+        /* Responsive */
         @media (max-width: 768px) {
             .grid-2 {
                 grid-template-columns: 1fr;
             }
             
-            .action-buttons {
+            .header {
                 flex-direction: column;
+                gap: 15px;
             }
             
-            .action-buttons button {
-                width: 100%;
+            .tabs {
+                justify-content: center;
             }
+            
+            .tab {
+                flex: 1;
+                min-width: 120px;
+            }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
         }
     </style>
 </head>
 <body>
     <!-- Login Section -->
-    <div class="login-section" id="loginSection">
-        <h1>🛡️ Wise Hub Admin</h1>
+    <div class="login-section glass" id="loginSection">
+        <h1>🛡️ WiseHub</h1>
+        <p>Admin Control Panel</p>
         <div class="form-group">
-            <label>API URL</label>
-            <input type="text" id="apiUrl" placeholder="https://wisehub-api.workers.dev" value="">
+            <label>Username</label>
+            <input type="text" id="apiUrl" placeholder="https://your-api.workers.dev" value="">
         </div>
         <div class="form-group">
-            <label>API Key</label>
-            <input type="password" id="apiKey" placeholder="Your API Secret Key" value="">
+            <label>Password</label>
+            <input type="password" id="apiKey" placeholder="Enter your secret key" value="">
         </div>
-        <button onclick="login()">Login</button>
-        <div id="loginError" style="color: #ef4444; margin-top: 15px;"></div>
+        <button onclick="login()">🔐 Login</button>
+        <div id="loginError" style="margin-top: 15px;"></div>
     </div>
 
     <!-- Dashboard -->
     <div class="container dashboard" id="dashboard">
-        <button class="logout-btn" onclick="logout()">Logout</button>
-        
-        <h1>🛡️ Wise Hub Admin Panel</h1>
+        <div class="header glass">
+            <h1>🛡️ WiseHub Control</h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
         
         <!-- Stats -->
         <div class="stats">
-            <div class="stat-card">
+            <div class="stat-card glass">
+                <span class="icon">👥</span>
                 <h3>Total Users</h3>
                 <div class="value" id="totalUsers">-</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card glass">
+                <span class="icon">✅</span>
                 <h3>Active Users</h3>
                 <div class="value" id="activeUsers">-</div>
             </div>
-            <div class="stat-card">
-                <h3>Total Logins Today</h3>
+            <div class="stat-card glass">
+                <span class="icon">📊</span>
+                <h3>Today's Logins</h3>
                 <div class="value" id="todayLogins">-</div>
             </div>
-            <div class="stat-card">
-                <h3>Supported Games</h3>
+            <div class="stat-card glass">
+                <span class="icon">🎮</span>
+                <h3>Games</h3>
                 <div class="value" id="totalGames">-</div>
             </div>
         </div>
@@ -370,19 +675,19 @@
             <button class="tab active" onclick="switchTab('users')">👥 Users</button>
             <button class="tab" onclick="switchTab('add')">➕ Add User</button>
             <button class="tab" onclick="switchTab('games')">🎮 Games</button>
+            <button class="tab" onclick="switchTab('scripts')">⚙️ Script Control</button>
             <button class="tab" onclick="switchTab('logs')">📊 Logs</button>
-            <button class="tab" onclick="switchTab('backup')">💾 Backup</button>
         </div>
 
-        <!-- Tab: Users List -->
-        <div class="tab-content active" id="tab-users">
+        <!-- Tab: Users -->
+        <div class="tab-content glass active" id="tab-users">
             <h2>VIP Users Management</h2>
             <button onclick="loadUsers()" class="btn-secondary">🔄 Refresh</button>
-            <div id="usersTable"></div>
+            <div class="table-container" id="usersTable"></div>
         </div>
 
         <!-- Tab: Add User -->
-        <div class="tab-content" id="tab-add">
+        <div class="tab-content glass" id="tab-add">
             <h2>Add New VIP User</h2>
             <div class="grid-2">
                 <div>
@@ -391,7 +696,7 @@
                         <input type="text" id="newUserId" placeholder="123456789">
                     </div>
                     <div class="form-group">
-                        <label>Username (Optional)</label>
+                        <label>Username</label>
                         <input type="text" id="newUsername" placeholder="PlayerName">
                     </div>
                     <div class="form-group">
@@ -405,9 +710,9 @@
                 </div>
                 <div>
                     <div class="form-group">
-                        <label>Custom Key (leave empty for auto-generate)</label>
-                        <input type="text" id="newKey" placeholder="WISE-CUSTOM-KEY">
-                        <button onclick="generateRandomKey()" class="btn-secondary">🎲 Generate Key</button>
+                        <label>Custom Key (optional)</label>
+                        <input type="text" id="newKey" placeholder="Leave empty for auto-generate">
+                        <button onclick="generateRandomKey()" class="btn-secondary" style="margin-top: 10px;">🎲 Generate Key</button>
                     </div>
                     <div class="form-group">
                         <label>Duration (Days)</label>
@@ -415,17 +720,17 @@
                     </div>
                 </div>
             </div>
-            <button onclick="addUser()">➕ Add User</button>
+            <button onclick="addUser()" class="btn-success">➕ Add User</button>
             <div id="addResult"></div>
         </div>
 
         <!-- Tab: Games -->
-        <div class="tab-content" id="tab-games">
-            <h2>Supported Games</h2>
+        <div class="tab-content glass" id="tab-games">
+            <h2>Game Scripts Management</h2>
             <button onclick="loadGames()" class="btn-secondary">🔄 Refresh</button>
-            <div id="gamesTable"></div>
+            <div class="table-container" id="gamesTable"></div>
             
-            <h3>Add New Game</h3>
+            <h2 style="margin-top: 40px;">Add New Game</h2>
             <div class="grid-2">
                 <div>
                     <div class="form-group">
@@ -439,58 +744,105 @@
                 </div>
                 <div>
                     <div class="form-group">
-                        <label>Script URL (GitHub Raw)</label>
+                        <label>Script URL</label>
                         <input type="text" id="newScriptUrl" placeholder="https://raw.githubusercontent.com/...">
                     </div>
                     <div class="form-group">
                         <label>Version</label>
-                        <input type="text" id="newVersion" value="1.0" placeholder="1.0">
+                        <input type="text" id="newVersion" value="1.0">
                     </div>
                 </div>
             </div>
-            <button onclick="addGame()">🎮 Add Game</button>
+            <button onclick="addGame()" class="btn-success">🎮 Add Game</button>
             <div id="gameResult"></div>
         </div>
 
-        <!-- Tab: Logs -->
-        <div class="tab-content" id="tab-logs">
-            <h2>Login Activity Logs</h2>
-            <div class="grid-2">
-                <div>
-                    <div class="form-group">
-                        <label>Filter by User ID (optional)</label>
-                        <input type="text" id="filterUserId" placeholder="Enter User ID">
+        <!-- Tab: Script Control -->
+        <div class="tab-content glass" id="tab-scripts">
+            <h2>⚡ Script Control Center</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">Manage, update, and obfuscate your game scripts</p>
+            
+            <div class="form-group">
+                <label>Select Game</label>
+                <select id="scriptGameSelect" onchange="loadScriptDetails()">
+                    <option value="">-- Select a game --</option>
+                </select>
+            </div>
+            
+            <div id="scriptDetails" style="display: none;">
+                <div class="grid-2">
+                    <div>
+                        <div class="form-group">
+                            <label>Game Name</label>
+                            <input type="text" id="scriptGameName" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Place ID</label>
+                            <input type="text" id="scriptPlaceId" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Current Version</label>
+                            <input type="text" id="scriptVersion" readonly>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <div class="kill-switch">
+                                <span id="killSwitchLabel">Disabled</span>
+                                <div class="kill-switch-toggle" id="killSwitchToggle" onclick="toggleKillSwitch()"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Script URL</label>
+                            <input type="text" id="scriptUrl" readonly>
+                        </div>
                     </div>
                 </div>
-                <div>
+                
+                <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary);">🔧 Script Actions</h3>
+                <div class="action-buttons">
+                    <button onclick="updateScript()" class="btn-secondary">📝 Update Script</button>
+                    <button onclick="obfuscateScript()" class="btn-success">🔒 Obfuscate Script</button>
+                    <button onclick="deleteGame()" class="btn-danger">🗑️ Delete Game</button>
+                </div>
+                
+                <div id="scriptActionResult"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Logs -->
+        <div class="tab-content glass" id="tab-logs">
+            <h2>Login Activity Logs</h2>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>Filter by User ID</label>
+                    <input type="text" id="filterUserId" placeholder="Optional">
+                </div>
+                <div class="form-group">
                     <label>&nbsp;</label>
-                    <button onclick="loadLogs()">🔍 Filter</button>
-                    <button onclick="clearLogsFilter()" class="btn-secondary">Clear</button>
+                    <div class="action-buttons">
+                        <button onclick="loadLogs()">🔍 Filter</button>
+                        <button onclick="clearLogsFilter()" class="btn-secondary">Clear</button>
+                    </div>
                 </div>
             </div>
-            <div id="logsTable"></div>
-        </div>
-        
-        <!-- Tab: Backup -->
-        <div class="tab-content" id="tab-backup">
-            <h2>Backup & Restore</h2>
-            <p class="info-text">Download backup dari semua data (users, games, logs)</p>
-            <button onclick="downloadBackup()">💾 Download Backup</button>
-            <div id="backupResult"></div>
+            <div class="table-container" id="logsTable"></div>
         </div>
     </div>
 
     <script>
-        // Global variables
-        let API_URL = 'https://iepdoukegjkivfceygsg.supabase.co';
+        let API_URL = '';
         let API_KEY = '';
+        let currentGames = [];
 
-        // Generate random key
+        // Generate Random Key
         function generateRandomKey() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let key = 'WISE-';
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 12; i++) {
                 key += chars.charAt(Math.floor(Math.random() * chars.length));
+                if (i % 4 === 3 && i < 11) key += '-';
             }
             document.getElementById('newKey').value = key;
         }
@@ -504,10 +856,7 @@
                     'x-api-key': API_KEY
                 }
             };
-
-            if (body) {
-                options.body = JSON.stringify(body);
-            }
+            if (body) options.body = JSON.stringify(body);
 
             const response = await fetch(API_URL + endpoint, options);
             const data = await response.json();
@@ -515,49 +864,47 @@
             if (!response.ok) {
                 throw new Error(data.message || data.error || 'API Error');
             }
-
             return data;
         }
 
-        // Show alert
+        // Show Alert
         function showAlert(id, message, type = 'success') {
             const elem = document.getElementById(id);
             if (elem) {
                 elem.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-                setTimeout(() => {
-                    elem.innerHTML = '';
-                }, 5000);
+                setTimeout(() => elem.innerHTML = '', 5000);
             }
         }
 
-        // Login function
+        // Login
         async function login() {
             API_URL = document.getElementById('apiUrl').value.trim();
             API_KEY = document.getElementById('apiKey').value.trim();
 
             if (!API_URL || !API_KEY) {
-                document.getElementById('loginError').textContent = 'API URL dan Key harus diisi!';
+                showAlert('loginError', '⚠️ Please fill all fields', 'error');
                 return;
             }
 
             try {
-                document.getElementById('loginError').textContent = 'Authenticating...';
+                showAlert('loginError', '🔄 Authenticating...', 'info');
                 await apiCall('/admin/list-users');
                 
                 document.getElementById('loginSection').style.display = 'none';
                 document.getElementById('dashboard').style.display = 'block';
-                document.getElementById('loginError').textContent = '';
                 
                 loadStats();
                 loadUsers();
                 loadGames();
+                populateGameSelect();
             } catch (error) {
-                document.getElementById('loginError').textContent = '❌ Login gagal: ' + error.message;
+                showAlert('loginError', '❌ Login failed: ' + error.message, 'error');
             }
         }
 
-        // Logout function
+        // Logout
         function logout() {
+            if (!confirm('Are you sure you want to logout?')) return;
             API_URL = '';
             API_KEY = '';
             document.getElementById('loginSection').style.display = 'block';
@@ -566,7 +913,7 @@
             document.getElementById('apiKey').value = '';
         }
 
-        // Load stats
+        // Load Stats
         async function loadStats() {
             try {
                 const stats = await apiCall('/admin/stats');
@@ -575,36 +922,37 @@
                 document.getElementById('todayLogins').textContent = stats.todayLogins || 0;
                 document.getElementById('totalGames').textContent = stats.totalGames || 0;
             } catch (error) {
-                console.error('Failed to load stats:', error);
+                console.error('Stats error:', error);
             }
         }
 
-        // Load users
+        // Load Users
         async function loadUsers() {
             try {
                 const users = await apiCall('/admin/list-users');
-                let html = '<table><thead><tr><th>User ID</th><th>Username</th><th>Tier</th><th>Key</th><th>Expiry</th><th>Active</th><th>HWID</th><th>Logins</th><th>Actions</th></tr></thead><tbody>';
+                let html = '<table><thead><tr><th>User ID</th><th>Username</th><th>Tier</th><th>Key</th><th>Expiry</th><th>Status</th><th>HWID</th><th>Logins</th><th>Actions</th></tr></thead><tbody>';
                 
                 if (Array.isArray(users) && users.length > 0) {
                     users.forEach(user => {
                         const expiry = new Date(user.expiry_date);
                         const isExpired = expiry < new Date();
-                        const tierBadge = `badge-${user.tier}`;
-                        const activeBadge = user.is_active ? 'badge-true' : 'badge-false';
+                        const tierClass = `badge-${user.tier}`;
+                        const statusClass = user.is_active && !isExpired ? 'badge-active' : 'badge-inactive';
+                        const statusText = user.is_active && !isExpired ? 'Active' : 'Inactive';
                         
                         html += `
                             <tr>
                                 <td><code>${user.user_id}</code></td>
                                 <td>${user.username || 'N/A'}</td>
-                                <td><span class="badge ${tierBadge}">${user.tier.toUpperCase()}</span></td>
+                                <td><span class="badge ${tierClass}">${user.tier}</span></td>
                                 <td><code>${user.key}</code></td>
-                                <td>${expiry.toLocaleDateString()} ${isExpired ? '<span class="badge badge-expired">EXPIRED</span>' : ''}</td>
-                                <td><span class="badge ${activeBadge}">${user.is_active ? 'YES' : 'NO'}</span></td>
-                                <td>${user.hwid ? '<code>' + user.hwid.substring(0, 8) + '...</code>' : 'Not Set'}</td>
+                                <td>${expiry.toLocaleDateString()}</td>
+                                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                                <td>${user.hwid ? '<code>Locked</code>' : '<span style="color: #94a3b8;">Not Set</span>'}</td>
                                 <td>${user.login_count || 0}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn-small" onclick="resetHWID('${user.user_id}')">Reset HWID</button>
+                                        <button class="btn-small btn-secondary" onclick="resetHWID('${user.user_id}')">Reset HWID</button>
                                         <button class="btn-small btn-danger" onclick="removeUser('${user.user_id}')">Delete</button>
                                     </div>
                                 </td>
@@ -612,7 +960,7 @@
                         `;
                     });
                 } else {
-                    html += '<tr><td colspan="9" style="text-align: center; color: #94a3b8;">No users found</td></tr>';
+                    html += '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No users found</td></tr>';
                 }
                 
                 html += '</tbody></table>';
@@ -622,7 +970,7 @@
             }
         }
 
-        // Add user
+        // Add User
         async function addUser() {
             const userId = document.getElementById('newUserId').value.trim();
             const username = document.getElementById('newUsername').value.trim();
@@ -631,20 +979,17 @@
             const days = document.getElementById('newDays').value;
 
             if (!userId || !days) {
-                showAlert('addResult', 'User ID dan Days harus diisi!', 'error');
+                showAlert('addResult', '⚠️ User ID and Days are required!', 'error');
                 return;
             }
 
             try {
-                const result = await apiCall('/admin/add-user', 'POST', {
-                    userId,
-                    username: username || undefined,
-                    key: key || undefined,
-                    tier,
-                    days: parseInt(days)
+                await apiCall('/admin/add-user', 'POST', {
+                    userId, username: username || undefined,
+                    key: key || undefined, tier, days: parseInt(days)
                 });
 
-                showAlert('addResult', `✅ User ${userId} berhasil ditambahkan!`, 'success');
+                showAlert('addResult', `✅ User ${userId} added successfully!`, 'success');
                 document.getElementById('newUserId').value = '';
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newKey').value = '';
@@ -657,13 +1002,13 @@
             }
         }
 
-        // Remove user
+        // Remove User
         async function removeUser(userId) {
-            if (!confirm(`Hapus user ${userId}?`)) return;
+            if (!confirm(`Delete user ${userId}? This cannot be undone!`)) return;
 
             try {
                 await apiCall('/admin/remove-user', 'POST', { userId });
-                showAlert('usersTable', `✅ User ${userId} berhasil dihapus!`, 'success');
+                showAlert('usersTable', `✅ User ${userId} deleted!`, 'success');
                 loadUsers();
                 loadStats();
             } catch (error) {
@@ -673,45 +1018,49 @@
 
         // Reset HWID
         async function resetHWID(userId) {
-            if (!confirm(`Reset HWID untuk user ${userId}?`)) return;
+            if (!confirm(`Reset HWID for user ${userId}?`)) return;
 
             try {
                 await apiCall('/admin/reset-hwid', 'POST', { userId });
-                showAlert('usersTable', `✅ HWID ${userId} berhasil direset!`, 'success');
+                showAlert('usersTable', `✅ HWID reset for ${userId}!`, 'success');
                 loadUsers();
             } catch (error) {
                 showAlert('usersTable', `❌ Error: ${error.message}`, 'error');
             }
         }
 
-        // Load games
+        // Load Games
         async function loadGames() {
             try {
                 const games = await apiCall('/admin/list-games');
-                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Active</th><th>Script URL</th><th>Actions</th></tr></thead><tbody>';
+                currentGames = games;
+                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Status</th><th>Script URL</th><th>Actions</th></tr></thead><tbody>';
                 
                 if (Array.isArray(games) && games.length > 0) {
                     games.forEach(game => {
-                        const activeBadge = game.is_active ? 'badge-true' : 'badge-false';
-                        const status = game.is_active ? 'Disable' : 'Enable';
+                        const statusClass = game.is_active ? 'badge-active' : 'badge-inactive';
+                        const statusText = game.is_active ? 'Active' : 'Disabled';
                         
                         html += `
                             <tr>
-                                <td>${game.game_name}</td>
+                                <td><strong>${game.game_name}</strong></td>
                                 <td><code>${game.place_id}</code></td>
                                 <td>${game.version || '1.0'}</td>
-                                <td><span class="badge ${activeBadge}">${game.is_active ? 'YES' : 'NO'}</span></td>
-                                <td><a href="${game.script_url}" target="_blank" style="color: #0ea5e9;">View</a></td>
+                                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                                <td><a href="${game.script_url}" target="_blank" style="color: var(--primary);">View</a></td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn-small" onclick="toggleGame('${game.place_id}', ${!game.is_active})">${status}</button>
+                                        <button class="btn-small ${game.is_active ? 'btn-danger' : 'btn-success'}" 
+                                            onclick="toggleGame('${game.place_id}', ${!game.is_active})">
+                                            ${game.is_active ? '🔴 Disable' : '🟢 Enable'}
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
                         `;
                     });
                 } else {
-                    html += '<tr><td colspan="6" style="text-align: center; color: #94a3b8;">No games found</td></tr>';
+                    html += '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No games found</td></tr>';
                 }
                 
                 html += '</tbody></table>';
@@ -721,7 +1070,7 @@
             }
         }
 
-        // Add game
+        // Add Game
         async function addGame() {
             const placeId = document.getElementById('newPlaceId').value.trim();
             const gameName = document.getElementById('newGameName').value.trim();
@@ -729,19 +1078,16 @@
             const version = document.getElementById('newVersion').value.trim();
 
             if (!placeId || !gameName || !scriptUrl) {
-                showAlert('gameResult', 'Place ID, Game Name, dan Script URL harus diisi!', 'error');
+                showAlert('gameResult', '⚠️ All fields are required!', 'error');
                 return;
             }
 
             try {
-                const result = await apiCall('/admin/add-game', 'POST', {
-                    placeId,
-                    gameName,
-                    scriptUrl,
-                    version: version || '1.0'
+                await apiCall('/admin/add-game', 'POST', {
+                    placeId, gameName, scriptUrl, version: version || '1.0'
                 });
 
-                showAlert('gameResult', `✅ Game ${gameName} berhasil ditambahkan!`, 'success');
+                showAlert('gameResult', `✅ Game ${gameName} added!`, 'success');
                 document.getElementById('newPlaceId').value = '';
                 document.getElementById('newGameName').value = '';
                 document.getElementById('newScriptUrl').value = '';
@@ -749,16 +1095,17 @@
                 
                 loadGames();
                 loadStats();
+                populateGameSelect();
             } catch (error) {
                 showAlert('gameResult', `❌ Error: ${error.message}`, 'error');
             }
         }
 
-        // Toggle game
+        // Toggle Game (Kill Switch)
         async function toggleGame(placeId, isActive) {
             try {
                 await apiCall('/admin/toggle-game', 'POST', { placeId, isActive });
-                showAlert('gamesTable', `✅ Game ${isActive ? 'diaktifkan' : 'dinonaktifkan'}!`, 'success');
+                showAlert('gamesTable', `✅ Kill switch ${isActive ? 'deactivated' : 'activated'}!`, 'success');
                 loadGames();
                 loadStats();
             } catch (error) {
@@ -766,33 +1113,173 @@
             }
         }
 
-        // Load logs
+        // Populate Game Select for Script Control
+        function populateGameSelect() {
+            const select = document.getElementById('scriptGameSelect');
+            select.innerHTML = '<option value="">-- Select a game --</option>';
+            
+            if (currentGames && currentGames.length > 0) {
+                currentGames.forEach(game => {
+                    const option = document.createElement('option');
+                    option.value = game.place_id;
+                    option.textContent = `${game.game_name} (${game.place_id})`;
+                    select.appendChild(option);
+                });
+            }
+        }
+
+        // Load Script Details
+        function loadScriptDetails() {
+            const placeId = document.getElementById('scriptGameSelect').value;
+            if (!placeId) {
+                document.getElementById('scriptDetails').style.display = 'none';
+                return;
+            }
+
+            const game = currentGames.find(g => g.place_id === placeId);
+            if (!game) return;
+
+            document.getElementById('scriptGameName').value = game.game_name;
+            document.getElementById('scriptPlaceId').value = game.place_id;
+            document.getElementById('scriptVersion').value = game.version || '1.0';
+            document.getElementById('scriptUrl').value = game.script_url;
+            
+            const toggle = document.getElementById('killSwitchToggle');
+            const label = document.getElementById('killSwitchLabel');
+            
+            if (game.is_active) {
+                toggle.classList.add('active');
+                label.textContent = 'Active';
+                label.style.color = 'var(--success)';
+            } else {
+                toggle.classList.remove('active');
+                label.textContent = 'Disabled';
+                label.style.color = 'var(--danger)';
+            }
+
+            document.getElementById('scriptDetails').style.display = 'block';
+        }
+
+        // Toggle Kill Switch
+        async function toggleKillSwitch() {
+            const placeId = document.getElementById('scriptPlaceId').value;
+            const game = currentGames.find(g => g.place_id === placeId);
+            
+            if (!game) return;
+
+            try {
+                await toggleGame(placeId, !game.is_active);
+                await loadGames();
+                loadScriptDetails();
+            } catch (error) {
+                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Update Script
+        async function updateScript() {
+            const placeId = document.getElementById('scriptPlaceId').value;
+            
+            const newUrl = prompt('Enter new script URL:');
+            if (!newUrl) return;
+            
+            const newVersion = prompt('Enter new version:', '1.0');
+            if (!newVersion) return;
+
+            try {
+                await apiCall('/admin/update-game', 'POST', {
+                    placeId, scriptUrl: newUrl, version: newVersion
+                });
+
+                showAlert('scriptActionResult', '✅ Script updated successfully!', 'success');
+                loadGames();
+                loadScriptDetails();
+            } catch (error) {
+                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Obfuscate Script
+        async function obfuscateScript() {
+            const placeId = document.getElementById('scriptPlaceId').value;
+            
+            if (!confirm('This will obfuscate the script. Continue?')) return;
+
+            try {
+                showAlert('scriptActionResult', '🔄 Obfuscating script... Please wait...', 'info');
+                
+                const result = await apiCall('/admin/obfuscate', 'POST', { placeId });
+                
+                // Download obfuscated script
+                const blob = new Blob([result.obfuscatedScript], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `obfuscated_${placeId}_${Date.now()}.lua`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                showAlert('scriptActionResult', 
+                    `✅ Script obfuscated! Original: ${result.originalLength} chars, Obfuscated: ${result.obfuscatedLength} chars. File downloaded.`, 
+                    'success');
+            } catch (error) {
+                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Delete Game
+        async function deleteGame() {
+            const placeId = document.getElementById('scriptPlaceId').value;
+            const gameName = document.getElementById('scriptGameName').value;
+            
+            if (!confirm(`Delete game "${gameName}"? This cannot be undone!`)) return;
+
+            try {
+                await apiCall('/admin/delete-game', 'POST', { placeId });
+                showAlert('scriptActionResult', `✅ Game deleted!`, 'success');
+                
+                document.getElementById('scriptDetails').style.display = 'none';
+                document.getElementById('scriptGameSelect').value = '';
+                
+                loadGames();
+                loadStats();
+                populateGameSelect();
+            } catch (error) {
+                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load Logs
         async function loadLogs() {
             try {
                 const userId = document.getElementById('filterUserId').value.trim();
                 const endpoint = userId ? `/admin/logs?userId=${userId}` : '/admin/logs';
                 const logs = await apiCall(endpoint);
                 
-                let html = '<table><thead><tr><th>Timestamp</th><th>User ID</th><th>Place ID</th><th>HWID</th><th>Success</th><th>Error Message</th></tr></thead><tbody>';
+                let html = '<table><thead><tr><th>Timestamp</th><th>User ID</th><th>Place ID</th><th>IP Address</th><th>HWID</th><th>Status</th><th>Error</th></tr></thead><tbody>';
                 
                 if (Array.isArray(logs) && logs.length > 0) {
                     logs.forEach(log => {
-                        const successBadge = log.success ? 'badge-true' : 'badge-false';
+                        const statusClass = log.success ? 'badge-active' : 'badge-inactive';
+                        const statusText = log.success ? 'Success' : 'Failed';
                         const time = new Date(log.timestamp).toLocaleString();
                         
                         html += `
                             <tr>
                                 <td>${time}</td>
                                 <td><code>${log.user_id}</code></td>
-                                <td><code>${log.place_id}</code></td>
-                                <td>${log.hwid ? '<code>' + log.hwid.substring(0, 8) + '...</code>' : 'N/A'}</td>
-                                <td><span class="badge ${successBadge}">${log.success ? 'YES' : 'NO'}</span></td>
-                                <td>${log.error_message || '-'}</td>
+                                <td><code>${log.place_id || 'N/A'}</code></td>
+                                <td>${log.ip_address || 'N/A'}</td>
+                                <td>${log.hwid ? '<code>Set</code>' : 'N/A'}</td>
+                                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                                <td style="color: var(--text-muted);">${log.error_message || '-'}</td>
                             </tr>
                         `;
                     });
                 } else {
-                    html += '<tr><td colspan="6" style="text-align: center; color: #94a3b8;">No logs found</td></tr>';
+                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No logs found</td></tr>';
                 }
                 
                 html += '</tbody></table>';
@@ -802,71 +1289,32 @@
             }
         }
 
-        // Clear logs filter
+        // Clear Logs Filter
         function clearLogsFilter() {
             document.getElementById('filterUserId').value = '';
             loadLogs();
         }
 
-        // Download backup
-        async function downloadBackup() {
-            try {
-                const response = await fetch(API_URL + '/admin/backup', {
-                    headers: {
-                        'x-api-key': API_KEY
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error('Failed to download backup');
-                }
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `wisehub-backup-${Date.now()}.json`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                showAlert('backupResult', '✅ Backup berhasil diunduh!', 'success');
-            } catch (error) {
-                showAlert('backupResult', `❌ Error: ${error.message}`, 'error');
-            }
-        }
-
-        // Switch tab
+        // Switch Tab
         function switchTab(tabName) {
-            // Hide all tabs
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
 
-            // Remove active class from all buttons
             const buttons = document.querySelectorAll('.tab');
             buttons.forEach(btn => btn.classList.remove('active'));
 
-            // Show selected tab
             const selectedTab = document.getElementById(`tab-${tabName}`);
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-            }
+            if (selectedTab) selectedTab.classList.add('active');
 
-            // Add active class to clicked button
             event.target.classList.add('active');
 
-            // Load data for specific tabs
-            if (tabName === 'users') {
-                loadUsers();
-            } else if (tabName === 'games') {
-                loadGames();
-            } else if (tabName === 'logs') {
-                loadLogs();
-            }
+            if (tabName === 'users') loadUsers();
+            else if (tabName === 'games') loadGames();
+            else if (tabName === 'scripts') populateGameSelect();
+            else if (tabName === 'logs') loadLogs();
         }
 
-        // Auto-load stats every 30 seconds
+        // Auto-refresh stats
         setInterval(() => {
             if (document.getElementById('dashboard').style.display !== 'none') {
                 loadStats();
