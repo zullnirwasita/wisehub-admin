@@ -1,1 +1,392 @@
-p
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiseHub Locker Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            color: #f1f5f9;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #0ea5e9, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .section h2 {
+            color: #0ea5e9;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #0ea5e9, #1e40af);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 5px;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        button.secondary {
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+        }
+        
+        button.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+        
+        textarea, input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #f1f5f9;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        .bip39-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .word-box {
+            background: rgba(15, 23, 42, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        
+        .word-box strong {
+            color: #0ea5e9;
+            font-size: 1.2em;
+        }
+        
+        pre {
+            background: rgba(15, 23, 42, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 0.85em;
+            line-height: 1.6;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .alert {
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid;
+        }
+        
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: #f59e0b;
+            color: #fbbf24;
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #6ee7b7;
+        }
+        
+        .alert-info {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: #0ea5e9;
+            color: #93c5fd;
+        }
+        
+        .step-indicator {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #0ea5e9, #1e40af);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 WiseHub Locker System - Test Interface</h1>
+        
+        <!-- Step 1 -->
+        <div class="section">
+            <h2><span class="step-indicator">1</span>Generate BIP39 Recovery Phrase</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">
+                Generate a 12-word mnemonic phrase that will be used to derive your master encryption key.
+            </p>
+            <button onclick="generateBIP39Test()">🎲 Generate 12-Word Phrase</button>
+            <div id="bip39Display"></div>
+        </div>
+        
+        <!-- Step 2 -->
+        <div class="section">
+            <h2><span class="step-indicator">2</span>Generate Encryption Keys</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">
+                Derive AES-256 master key from BIP39 and generate RSA-2048 key pair.
+            </p>
+            <button onclick="generateKeysTest()">🔑 Generate Keys</button>
+            <div id="keysDisplay"></div>
+        </div>
+        
+        <!-- Step 3 -->
+        <div class="section">
+            <h2><span class="step-indicator">3</span>Encrypt Script</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">
+                Paste a Lua script below to encrypt it with AES-256-GCM.
+            </p>
+            <textarea id="scriptInput" placeholder="-- Paste your Lua script here
+print('Hello from WiseHub!')
+game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 50"></textarea>
+            <button onclick="encryptScriptTest()">🔒 Encrypt Script</button>
+            <div id="encryptResult"></div>
+        </div>
+        
+        <!-- Step 4 -->
+        <div class="section">
+            <h2><span class="step-indicator">4</span>Decrypt Script</h2>
+            <p style="color: #94a3b8; margin-bottom: 15px;">
+                Enter your 12-word recovery phrase to decrypt the script.
+            </p>
+            <div id="decryptBIP39Input"></div>
+            <button onclick="decryptScriptTest()">🔓 Decrypt Script</button>
+            <div id="decryptResult"></div>
+        </div>
+        
+        <!-- Info -->
+        <div class="section">
+            <h2>ℹ️ How It Works</h2>
+            <div class="alert alert-info">
+                <strong>Encryption Flow:</strong>
+                <ol style="margin-left: 20px; margin-top: 10px;">
+                    <li>BIP39 words → PBKDF2 (100k iterations) → AES-256 Master Key</li>
+                    <li>RSA-2048 key pair generated</li>
+                    <li>RSA Private Key encrypted with Master Key</li>
+                    <li>Random AES-256 key per script</li>
+                    <li>Script encrypted with AES key</li>
+                    <li>AES key encrypted with RSA Public Key</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <script src="./js/crypto-utils.js"></script>
+    <script>
+        let testData = {
+            bip39Words: [],
+            rsaKeys: null,
+            masterKey: null,
+            encryptedScript: null,
+            rsaEncryptedAESKey: null,
+            scriptAESKey: null
+        };
+        
+        async function generateBIP39Test() {
+            try {
+                testData.bip39Words = await CryptoUtils.generateBIP39Words(12);
+                
+                let html = '<div class="alert alert-warning" style="margin-top: 20px;">';
+                html += '<strong>⚠️ SAVE THESE WORDS!</strong> You will need them to decrypt your scripts.';
+                html += '</div>';
+                html += '<div class="bip39-grid">';
+                testData.bip39Words.forEach((word, i) => {
+                    html += `<div class="word-box">${i + 1}. <strong>${word}</strong></div>`;
+                });
+                html += '</div>';
+                
+                document.getElementById('bip39Display').innerHTML = html;
+                
+                console.log('✅ BIP39 Words:', testData.bip39Words);
+            } catch (error) {
+                document.getElementById('bip39Display').innerHTML = 
+                    `<div class="alert alert-warning">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function generateKeysTest() {
+            if (testData.bip39Words.length === 0) {
+                alert('⚠️ Generate BIP39 phrase first!');
+                return;
+            }
+            
+            try {
+                const wordlist = await CryptoUtils.loadWordlist();
+                const bip39Bytes = await CryptoUtils.bip39WordsToUint8Array(testData.bip39Words, wordlist);
+                testData.masterKey = await CryptoUtils.deriveKey(bip39Bytes, 'WISEHUB_MASTER_SALT');
+                
+                testData.rsaKeys = await CryptoUtils.generateRSAKeyPair();
+                
+                const rsaPrivEnc = await CryptoUtils.encryptAESGCM(testData.rsaKeys.privateKey, testData.masterKey);
+                
+                let html = '<div class="alert alert-success">✅ Keys generated successfully!</div>';
+                html += '<pre>';
+                html += '<strong>RSA Public Key (first 150 chars):</strong>\n';
+                html += testData.rsaKeys.publicKey.substring(0, 150) + '...\n\n';
+                html += '<strong>RSA Private Key - Encrypted (first 150 chars):</strong>\n';
+                html += CryptoUtils.arrayBufferToBase64(rsaPrivEnc).substring(0, 150) + '...\n\n';
+                html += '<strong>Master Key:</strong> [Hidden - Derived from BIP39]';
+                html += '</pre>';
+                
+                document.getElementById('keysDisplay').innerHTML = html;
+                
+                console.log('✅ Master Key:', testData.masterKey);
+                console.log('✅ RSA Keys:', testData.rsaKeys);
+            } catch (error) {
+                document.getElementById('keysDisplay').innerHTML = 
+                    `<div class="alert alert-warning">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function encryptScriptTest() {
+            const scriptContent = document.getElementById('scriptInput').value.trim();
+            
+            if (!scriptContent) {
+                alert('⚠️ Enter a script to encrypt!');
+                return;
+            }
+            
+            if (!testData.rsaKeys) {
+                alert('⚠️ Generate keys first!');
+                return;
+            }
+            
+            try {
+                const randomAESKey = crypto.getRandomValues(new Uint8Array(32));
+                testData.scriptAESKey = await CryptoUtils.deriveKey(randomAESKey, 'SCRIPT_SALT_TEST');
+                
+                testData.encryptedScript = await CryptoUtils.encryptAESGCM(scriptContent, testData.scriptAESKey);
+                
+                testData.rsaEncryptedAESKey = await CryptoUtils.encryptRSA(
+                    testData.rsaKeys.publicKey,
+                    CryptoUtils.arrayBufferToBase64(randomAESKey)
+                );
+                
+                let html = '<div class="alert alert-success">✅ Script encrypted successfully!</div>';
+                html += '<pre>';
+                html += '<strong>Original Size:</strong> ' + scriptContent.length + ' bytes\n';
+                html += '<strong>Encrypted Size:</strong> ' + testData.encryptedScript.length + ' bytes\n\n';
+                html += '<strong>Encrypted Script (Base64, first 200 chars):</strong>\n';
+                html += CryptoUtils.arrayBufferToBase64(testData.encryptedScript).substring(0, 200) + '...\n\n';
+                html += '<strong>RSA-Encrypted AES Key (first 100 chars):</strong>\n';
+                html += testData.rsaEncryptedAESKey.substring(0, 100) + '...';
+                html += '</pre>';
+                
+                document.getElementById('encryptResult').innerHTML = html;
+                
+                console.log('✅ Encrypted Script:', testData.encryptedScript);
+            } catch (error) {
+                document.getElementById('encryptResult').innerHTML = 
+                    `<div class="alert alert-warning">❌ Error: ${error.message}</div>`;
+            }
+        }
+        
+        async function decryptScriptTest() {
+            if (!testData.encryptedScript) {
+                alert('⚠️ Encrypt a script first!');
+                return;
+            }
+            
+            const bip39Input = [];
+            for (let i = 1; i <= 12; i++) {
+                const val = document.getElementById(`decryptWord${i}`).value.trim().toLowerCase();
+                if (!val) {
+                    alert('⚠️ Enter all 12 words!');
+                    return;
+                }
+                bip39Input.push(val);
+            }
+            
+            try {
+                const wordlist = await CryptoUtils.loadWordlist();
+                const bip39Bytes = await CryptoUtils.bip39WordsToUint8Array(bip39Input, wordlist);
+                const inputMasterKey = await CryptoUtils.deriveKey(bip39Bytes, 'WISEHUB_MASTER_SALT');
+                
+                const rsaPrivEnc = await CryptoUtils.encryptAESGCM(testData.rsaKeys.privateKey, testData.masterKey);
+                const rsaPriv = await CryptoUtils.decryptAESGCM(rsaPrivEnc, inputMasterKey);
+                
+                const aesKeyBase64 = await CryptoUtils.decryptRSA(rsaPriv, testData.rsaEncryptedAESKey);
+                const aesKeyBytes = CryptoUtils.base64ToArrayBuffer(aesKeyBase64);
+                const scriptAESKey = await CryptoUtils.deriveKey(aesKeyBytes, 'SCRIPT_SALT_TEST');
+                
+                const decryptedScript = await CryptoUtils.decryptAESGCM(testData.encryptedScript, scriptAESKey);
+                
+                let html = '<div class="alert alert-success">✅ Decryption successful!</div>';
+                html += '<pre style="max-height: 400px; overflow-y: auto;">';
+                html += '<strong>Decrypted Script:</strong>\n\n' + decryptedScript;
+                html += '</pre>';
+                
+                document.getElementById('decryptResult').innerHTML = html;
+                
+                console.log('✅ Decrypted Script:', decryptedScript);
+            } catch (error) {
+                document.getElementById('decryptResult').innerHTML = 
+                    `<div class="alert alert-warning">❌ Decryption failed: ${error.message}<br><br>Make sure you entered the correct 12 words!</div>`;
+                console.error('Decryption error:', error);
+            }
+        }
+        
+        window.onload = function() {
+            let html = '<div class="bip39-grid">';
+            for (let i = 1; i <= 12; i++) {
+                html += `<input type="text" id="decryptWord${i}" placeholder="Word ${i}" style="text-align: center;">`;
+            }
+            html += '</div>';
+            document.getElementById('decryptBIP39Input').innerHTML = html;
+            
+            console.log('🔐 Locker Test Interface Ready');
+        };
+    </script>
+</body>
+</html>
