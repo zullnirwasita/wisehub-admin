@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiseHub Admin - Simple Manager</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="WiseHub Admin Panel - Manage your VIP users and game scripts">
+    <meta name="robots" content="noindex, nofollow">
+    <title>WiseHub Admin Panel V2</title>
+    
+    <!-- Security Headers via Meta -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https: data:">
+    
+    <!-- External Dependencies -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        /* ===== CSS VARIABLES ===== */
         :root {
             --primary: #3b82f6;
             --primary-dark: #2563eb;
+            --secondary: #8b5cf6;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #06b6d4;
             --dark: #0f172a;
             --darker: #0a0f1f;
             --text: #f1f5f9;
@@ -28,16 +33,34 @@
             --card-bg: rgba(30, 41, 59, 0.5);
             --border-color: rgba(255, 255, 255, 0.1);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-sm: 0 4px 15px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.4);
         }
-        
+
+        /* ===== RESET & BASE STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, #1e1b4b 100%);
             color: var(--text);
             min-height: 100vh;
             overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        
+
+        /* Animated Background */
         body::before {
             content: '';
             position: fixed;
@@ -45,27 +68,20 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
             animation: bgMove 20s ease infinite;
             pointer-events: none;
             z-index: 0;
         }
-        
-        @keyframes bgMove {
 
-            0%,
-            100% {
-                opacity: 0.5;
-                transform: scale(1);
-            }
-            
-            50% {
-                opacity: 0.8;
-                transform: scale(1.1);
-            }
+        @keyframes bgMove {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.1); }
         }
-        
+
+        /* ===== CONTAINER ===== */
         .container {
             position: relative;
             z-index: 1;
@@ -73,21 +89,23 @@
             margin: 0 auto;
             padding: 20px;
         }
-        
+
+        /* ===== GLASS EFFECT ===== */
         .glass {
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--border-color);
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-md);
             transition: var(--transition);
         }
-        
+
         .glass:hover {
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
-            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
-        
+
+        /* ===== LOGIN SECTION ===== */
         .login-section {
             max-width: 450px;
             margin: 100px auto;
@@ -96,7 +114,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .login-section::after {
             content: '';
             position: absolute;
@@ -108,66 +126,57 @@
             animation: rotate 30s linear infinite;
             z-index: -1;
         }
-        
+
         @keyframes rotate {
-            0% {
-                transform: rotate(0deg);
-            }
-            
-            100% {
-                transform: rotate(360deg);
-            }
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
-        
+
         .login-section h1 {
             text-align: center;
             font-size: 2.5em;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            position: relative;
+            background-clip: text;
         }
-        
+
         .login-section p {
             text-align: center;
             color: var(--text-muted);
             margin-bottom: 30px;
         }
-        
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(30px);
             }
-            
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
+        /* ===== DASHBOARD ===== */
         .dashboard {
             display: none;
             animation: fadeIn 0.5s ease;
         }
-        
+
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            
-            to {
-                opacity: 1;
-            }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        
+
+        /* ===== HEADER ===== */
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 30px;
-            padding: 20px;
+            padding: 20px 30px;
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 20px;
@@ -175,7 +184,7 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .header::before {
             content: '';
             position: absolute;
@@ -187,48 +196,51 @@
             transform: translateX(-100%);
             animation: shimmer 8s infinite;
         }
-        
+
         @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-            
-            100% {
-                transform: translateX(100%);
-            }
+            to { transform: translateX(100%); }
         }
-        
+
         .header h1 {
             font-size: 2em;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             position: relative;
             z-index: 1;
         }
-        
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== STATS CARDS ===== */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
             margin-bottom: 30px;
         }
-        
+
         .stat-card {
             padding: 25px;
             position: relative;
             overflow: hidden;
-            animation: slideIn 0.5s ease forwards;
-            opacity: 0;
             cursor: pointer;
             transition: var(--transition);
+            animation: slideIn 0.5s ease forwards;
+            opacity: 0;
         }
-        
+
         .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+            transform: translateY(-5px) scale(1.02);
         }
-        
+
         .stat-card::before {
             content: '';
             position: absolute;
@@ -236,36 +248,21 @@
             left: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(180deg, var(--primary), #8b5cf6);
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
         }
-        
+
         @keyframes slideIn {
             to {
                 opacity: 1;
                 transform: translateX(0);
             }
         }
-        
-        .stat-card:nth-child(1) {
-            animation-delay: 0.1s;
-            transform: translateX(-20px);
-        }
-        
-        .stat-card:nth-child(2) {
-            animation-delay: 0.2s;
-            transform: translateX(-20px);
-        }
-        
-        .stat-card:nth-child(3) {
-            animation-delay: 0.3s;
-            transform: translateX(-20px);
-        }
-        
-        .stat-card:nth-child(4) {
-            animation-delay: 0.4s;
-            transform: translateX(-20px);
-        }
-        
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; transform: translateX(-20px); }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; transform: translateX(-20px); }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; transform: translateX(-20px); }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; transform: translateX(-20px); }
+
         .stat-card h3 {
             color: var(--text-muted);
             font-size: 0.9em;
@@ -274,20 +271,21 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        
+
         .stat-card .value {
             font-size: 2.5em;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             transition: var(--transition);
         }
-        
+
         .stat-card:hover .value {
             transform: scale(1.05);
         }
-        
+
         .stat-card .icon {
             position: absolute;
             right: 20px;
@@ -296,12 +294,29 @@
             opacity: 0.3;
             transition: var(--transition);
         }
-        
+
         .stat-card:hover .icon {
             opacity: 0.6;
             transform: rotate(15deg);
         }
-        
+
+        .progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* ===== TABS ===== */
         .tabs {
             display: flex;
             gap: 10px;
@@ -311,26 +326,9 @@
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            position: relative;
-            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
-        .tabs::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, var(--primary), transparent);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-        }
-        
-        .tabs:hover::after {
-            transform: scaleX(1);
-        }
-        
+
         .tab {
             padding: 12px 24px;
             background: transparent;
@@ -347,7 +345,7 @@
             align-items: center;
             gap: 8px;
         }
-        
+
         .tab::before {
             content: '';
             position: absolute;
@@ -355,36 +353,37 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             transition: left 0.3s ease;
             z-index: -1;
         }
-        
+
         .tab:hover {
             color: white;
             border-color: var(--primary);
             transform: translateY(-2px);
         }
-        
+
         .tab.active {
             color: white;
             border-color: transparent;
         }
-        
+
         .tab.active::before {
             left: 0;
         }
-        
+
+        /* ===== TAB CONTENT ===== */
         .tab-content {
             display: none;
             padding: 30px;
             animation: fadeInUp 0.5s ease;
         }
-        
+
         .tab-content.active {
             display: block;
         }
-        
+
         .tab-content h2 {
             margin-bottom: 20px;
             color: var(--primary);
@@ -392,7 +391,7 @@
             position: relative;
             display: inline-block;
         }
-        
+
         .tab-content h2::after {
             content: '';
             position: absolute;
@@ -402,12 +401,13 @@
             height: 2px;
             background: linear-gradient(90deg, var(--primary), transparent);
         }
-        
+
+        /* ===== FORM ELEMENTS ===== */
         .form-group {
             margin-bottom: 20px;
             position: relative;
         }
-        
+
         label {
             display: block;
             margin-bottom: 8px;
@@ -417,10 +417,8 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        
-        input,
-        select,
-        textarea {
+
+        input, select, textarea {
             width: 100%;
             padding: 14px 18px;
             background: rgba(15, 23, 42, 0.8);
@@ -429,17 +427,22 @@
             color: var(--text);
             font-size: 1em;
             transition: var(--transition);
+            font-family: inherit;
         }
-        
-        input:focus,
-        select:focus,
-        textarea:focus {
+
+        input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: var(--primary);
             background: rgba(15, 23, 42, 0.95);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
-        
+
+        input:disabled, select:disabled, textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* ===== BUTTONS ===== */
         button {
             padding: 14px 28px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -450,11 +453,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            box-shadow: var(--shadow-sm);
             position: relative;
             overflow: hidden;
+            font-family: inherit;
         }
-        
+
         button::before {
             content: '';
             position: absolute;
@@ -467,49 +471,61 @@
             transform: translate(-50%, -50%);
             transition: width 0.6s, height 0.6s;
         }
-        
+
         button:active::before {
             width: 300px;
             height: 300px;
         }
-        
-        button:hover {
+
+        button:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
         }
-        
+
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .btn-secondary {
             background: linear-gradient(135deg, #6b7280, #4b5563);
             box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
         }
-        
+
         .btn-danger {
             background: linear-gradient(135deg, var(--danger), #dc2626);
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
         }
-        
+
         .btn-success {
             background: linear-gradient(135deg, var(--success), #059669);
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
-        
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, var(--info), #0891b2);
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+
         .btn-small {
             padding: 8px 16px;
             font-size: 0.85em;
         }
-        
+
+        /* ===== GRID ===== */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
-        
+
+        /* ===== TABLE ===== */
         .table-container {
             overflow-x: auto;
             margin-top: 20px;
@@ -517,21 +533,21 @@
             background: var(--card-bg);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-sm);
+            max-height: 600px;
         }
-        
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        
-        th,
-        td {
+
+        th, td {
             padding: 16px;
             text-align: left;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
-        
+
         th {
             background: rgba(59, 130, 246, 0.1);
             color: var(--primary);
@@ -542,17 +558,18 @@
             position: sticky;
             top: 0;
             z-index: 10;
+            backdrop-filter: blur(10px);
         }
-        
+
         tbody tr {
             transition: var(--transition);
         }
-        
+
         tbody tr:hover {
             background: rgba(59, 130, 246, 0.05);
-            transform: scale(1.01);
         }
-        
+
+        /* ===== BADGES ===== */
         .badge {
             padding: 6px 12px;
             border-radius: 8px;
@@ -561,122 +578,53 @@
             display: inline-block;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
         }
-        
-        .badge::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            animation: badgeShimmer 3s infinite;
-        }
-        
-        @keyframes badgeShimmer {
-            0% {
-                left: -100%;
-            }
-            
-            100% {
-                left: 100%;
-            }
-        }
-        
-        .badge-premium {
-            background: linear-gradient(135deg, var(--warning), #d97706);
-            color: white;
-        }
-        
-        .badge-basic {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            color: white;
-        }
-        
-        .badge-vip {
-            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-            color: white;
-        }
-        
-        .badge-active {
-            background: linear-gradient(135deg, var(--success), #059669);
-            color: white;
-        }
-        
-        .badge-inactive {
-            background: linear-gradient(135deg, #6b7280, #4b5563);
-            color: white;
-        }
-        
+
+        .badge-premium { background: linear-gradient(135deg, var(--warning), #d97706); color: white; }
+        .badge-basic { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+        .badge-vip { background: linear-gradient(135deg, var(--secondary), #7c3aed); color: white; }
+        .badge-active { background: linear-gradient(135deg, var(--success), #059669); color: white; }
+        .badge-inactive { background: linear-gradient(135deg, #6b7280, #4b5563); color: white; }
+
+        /* ===== ALERTS ===== */
         .alert {
             padding: 16px 20px;
             border-radius: 12px;
             margin-bottom: 20px;
             animation: slideDown 0.5s ease;
             border-left: 4px solid;
-            position: relative;
-            overflow: hidden;
         }
-        
-        .alert::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
-            animation: alertShimmer 3s infinite;
-        }
-        
-        @keyframes alertShimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-            
-            100% {
-                transform: translateX(100%);
-            }
-        }
-        
+
         @keyframes slideDown {
             from {
                 opacity: 0;
                 transform: translateY(-10px);
             }
-            
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         .alert-success {
             background: rgba(16, 185, 129, 0.2);
             border-color: var(--success);
             color: #6ee7b7;
         }
-        
+
         .alert-error {
             background: rgba(239, 68, 68, 0.2);
             border-color: var(--danger);
             color: #fca5a5;
         }
-        
+
         .alert-info {
             background: rgba(59, 130, 246, 0.2);
             border-color: var(--primary);
             color: #93c5fd;
         }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-        }
-        
+
+        /* ===== LOADING ===== */
         .spinner {
             width: 50px;
             height: 50px;
@@ -684,400 +632,50 @@
             border-top-color: var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+            margin: 20px auto;
         }
-        
+
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
-        
+
+        /* ===== CODE ===== */
         code {
             background: rgba(15, 23, 42, 0.8);
             padding: 4px 8px;
             border-radius: 6px;
-            font-family: 'Fira Code', monospace;
+            font-family: 'Fira Code', 'Courier New', monospace;
             color: var(--primary);
             font-size: 0.9em;
         }
-        
+
+        /* ===== ACTION BUTTONS ===== */
         .action-buttons {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-        
-        .time-info {
-            font-size: 0.85em;
-            color: var(--text-muted);
-            margin-top: 5px;
-        }
-        
-        .update-badge {
-            display: inline-block;
-            padding: 4px 8px;
-            background: rgba(59, 130, 246, 0.2);
-            border-radius: 6px;
-            font-size: 0.75em;
-            color: #93c5fd;
-            margin-left: 8px;
-        }
-        
-        /* Mobile Menu */
-        .mobile-menu-toggle {
-            display: none;
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-        
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.95);
-            z-index: 1000;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        .mobile-menu.active {
-            display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        .mobile-menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        
-        .mobile-menu-close {
-            background: transparent;
-            border: none;
-            color: var(--text);
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-        
-        .mobile-menu-tabs {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        
-        .mobile-tab {
-            padding: 15px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            color: var(--text);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .mobile-tab:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: var(--primary);
-        }
-        
-        .mobile-tab.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: var(--primary);
-        }
-        
-        /* Floating Action Button */
-        .fab {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), #8b5cf6);
-            color: white;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
-            z-index: 100;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-        
-        .fab:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
-        }
-        
-        .fab:active {
-            transform: scale(0.95);
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .stats {
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 15px;
-            }
-            
-            .stat-card {
-                padding: 20px;
-            }
-            
-            .stat-card .value {
-                font-size: 2em;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            .grid-2 {
-                grid-template-columns: 1fr;
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 15px;
-                padding: 15px;
-            }
-            
-            .header h1 {
-                font-size: 1.5em;
-            }
-            
-            .tabs {
-                display: none;
-            }
-            
-            .mobile-menu-toggle {
-                display: block;
-            }
-            
-            .fab {
-                display: flex;
-            }
-            
-            .tab-content {
-                padding: 20px;
-            }
-            
-            .table-container {
-                font-size: 0.9em;
-            }
-            
-            th,
-            td {
-                padding: 12px 8px;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .btn-small {
-                width: 100%;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .login-section {
-                margin: 50px auto;
-                padding: 30px 20px;
-            }
-            
-            .login-section h1 {
-                font-size: 2em;
-            }
-            
-            .container {
-                padding: 10px;
-            }
-            
-            .stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .tab-content {
-                padding: 15px;
-            }
-            
-            .tab-content h2 {
-                font-size: 1.5em;
-            }
-            
-            .table-container {
-                font-size: 0.8em;
-            }
-            
-            th,
-            td {
-                padding: 10px 5px;
-            }
-            
-            .badge {
-                padding: 4px 8px;
-                font-size: 0.7em;
-            }
-        }
-        
-        /* Dark mode toggle */
-        .dark-mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            transition: var(--transition);
-        }
-        
-        .dark-mode-toggle:hover {
-            background: rgba(59, 130, 246, 0.2);
-            transform: rotate(180deg);
-        }
-        
-        /* Loading skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
-            background-size: 200% 100%;
-            animation: skeleton 1.5s infinite;
-        }
-        
-        @keyframes skeleton {
-            0% {
-                background-position: 200% 0;
-            }
-            
-            100% {
-                background-position: -200% 0;
-            }
-        }
-        
-        .skeleton-text {
-            height: 1em;
-            margin-bottom: 0.5em;
-            border-radius: 4px;
-        }
-        
-        .skeleton-card {
-            height: 100px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-        
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-        }
-        
-        .tooltip .tooltiptext {
-            visibility: hidden;
-            width: 120px;
-            background-color: var(--darker);
-            color: var(--text);
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.8em;
-        }
-        
-        .tooltip:hover .tooltiptext {
-            visibility: visible;
-            opacity: 1;
-        }
-        
-        /* Search bar */
+
+        /* ===== SEARCH ===== */
         .search-container {
             position: relative;
             margin-bottom: 20px;
         }
-        
+
         .search-input {
-            width: 100%;
-            padding: 12px 40px 12px 18px;
-            background: rgba(15, 23, 42, 0.8);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            color: var(--text);
-            font-size: 1em;
-            transition: var(--transition);
+            padding-right: 45px;
         }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(15, 23, 42, 0.95);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-        
+
         .search-icon {
             position: absolute;
             right: 15px;
             top: 50%;
             transform: translateY(-50%);
             color: var(--text-muted);
+            pointer-events: none;
         }
-        
-        /* Progress bar */
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 10px 0;
-        }
-        
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), #8b5cf6);
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-        
-        /* Card hover effect */
-        .card-hover {
-            transition: var(--transition);
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-        
-        /* Notification */
+
+        /* ===== NOTIFICATION ===== */
         .notification {
             position: fixed;
             top: 20px;
@@ -1088,99 +686,148 @@
             border: 1px solid var(--border-color);
             border-radius: 12px;
             color: var(--text);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: var(--shadow-md);
             z-index: 1000;
             transform: translateX(120%);
             transition: transform 0.3s ease;
+            max-width: 300px;
         }
-        
+
         .notification.show {
             transform: translateX(0);
         }
-        
-        .notification.success {
-            border-left: 4px solid var(--success);
+
+        .notification.success { border-left: 4px solid var(--success); }
+        .notification.error { border-left: 4px solid var(--danger); }
+        .notification.info { border-left: 4px solid var(--primary); }
+
+        /* ===== MOBILE STYLES ===== */
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .tabs {
+                display: none;
+            }
+
+            .stat-card {
+                padding: 20px;
+            }
+
+            .stat-card .value {
+                font-size: 2em;
+            }
+
+            .tab-content {
+                padding: 20px;
+            }
+
+            th, td {
+                padding: 12px 8px;
+                font-size: 0.9em;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-small {
+                width: 100%;
+            }
         }
+
+        /* ===== UTILITY CLASSES ===== */
+        .text-center { text-align: center; }
+        .mt-1 { margin-top: 10px; }
+        .mt-2 { margin-top: 20px; }
+        .mb-1 { margin-bottom: 10px; }
+        .mb-2 { margin-bottom: 20px; }
+        .hidden { display: none; }
         
-        .notification.error {
-            border-left: 4px solid var(--danger);
+        /* ===== SECURITY INDICATOR ===== */
+        .security-badge {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 15px;
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--success);
+            border-radius: 8px;
+            color: var(--success);
+            font-size: 0.8em;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
-        
-        .notification.info {
-            border-left: 4px solid var(--primary);
+
+        .security-badge i {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
-
 <body>
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="mobile-menu-header">
-            <h1>🛡️ WiseHub</h1>
-            <button class="mobile-menu-close" onclick="toggleMobileMenu()">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="mobile-menu-tabs">
-            <div class="mobile-tab active" onclick="switchTabMobile('users')">
-                <i class="fas fa-users"></i>
-                <span>Users</span>
-            </div>
-            <div class="mobile-tab" onclick="switchTabMobile('add')">
-                <i class="fas fa-plus"></i>
-                <span>Add User</span>
-            </div>
-            <div class="mobile-tab" onclick="switchTabMobile('games')">
-                <i class="fas fa-gamepad"></i>
-                <span>Games</span>
-            </div>
-            <div class="mobile-tab" onclick="switchTabMobile('logs')">
-                <i class="fas fa-chart-line"></i>
-                <span>Logs</span>
-            </div>
-        </div>
+    <!-- Security Indicator -->
+    <div class="security-badge">
+        <i class="fas fa-shield-alt"></i>
+        <span>Secure Connection</span>
     </div>
-    
-    <!-- Dark Mode Toggle -->
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="fas fa-moon" id="darkModeIcon"></i>
-    </div>
-    
+
     <!-- Notification -->
     <div class="notification" id="notification"></div>
-    
+
     <!-- Login Section -->
     <div class="login-section glass" id="loginSection">
         <h1>🛡️ WiseHub</h1>
-        <p>Simple Admin Panel</p>
+        <p>Admin Control Panel V2</p>
         <div class="form-group">
-            <label>API URL</label>
-            <input type="text" id="apiUrl" placeholder="https://your-worker.workers.dev" value="">
+            <label><i class="fas fa-link"></i> API URL</label>
+            <input type="url" id="apiUrl" placeholder="https://your-worker.workers.dev" required>
         </div>
         <div class="form-group">
-            <label>API Key</label>
-            <input type="password" id="apiKey" placeholder="Enter your secret key" value="">
+            <label><i class="fas fa-key"></i> API Key</label>
+            <input type="password" id="apiKey" placeholder="Enter your secret key" required autocomplete="off">
         </div>
-        <button onclick="login()">🔐 Login</button>
-        <div id="loginError" style="margin-top: 15px;"></div>
+        <button onclick="login()" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i> Login
+        </button>
+        <div id="loginError"></div>
     </div>
-    
+
     <!-- Dashboard -->
     <div class="container dashboard" id="dashboard">
         <div class="header glass">
             <h1>🛡️ WiseHub Control</h1>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
-                    <i class="fas fa-bars"></i>
+            <div class="header-actions">
+                <button class="btn-info btn-small" onclick="exportData()">
+                    <i class="fas fa-download"></i> Export
                 </button>
-                <button class="btn-danger" onclick="logout()">Logout</button>
+                <button class="btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
             </div>
         </div>
-        
+
         <!-- Stats -->
         <div class="stats">
             <div class="stat-card glass" onclick="showStatDetails('users')">
-                <span class="icon">👥</span>
+                <span class="icon"><i class="fas fa-users"></i></span>
                 <h3>Total Users</h3>
                 <div class="value" id="totalUsers">-</div>
                 <div class="progress-container">
@@ -1188,7 +835,7 @@
                 </div>
             </div>
             <div class="stat-card glass" onclick="showStatDetails('active')">
-                <span class="icon">✅</span>
+                <span class="icon"><i class="fas fa-check-circle"></i></span>
                 <h3>Active Users</h3>
                 <div class="value" id="activeUsers">-</div>
                 <div class="progress-container">
@@ -1196,7 +843,7 @@
                 </div>
             </div>
             <div class="stat-card glass" onclick="showStatDetails('logins')">
-                <span class="icon">📊</span>
+                <span class="icon"><i class="fas fa-chart-line"></i></span>
                 <h3>Today's Logins</h3>
                 <div class="value" id="todayLogins">-</div>
                 <div class="progress-container">
@@ -1204,7 +851,7 @@
                 </div>
             </div>
             <div class="stat-card glass" onclick="showStatDetails('games')">
-                <span class="icon">🎮</span>
+                <span class="icon"><i class="fas fa-gamepad"></i></span>
                 <h3>Games</h3>
                 <div class="value" id="totalGames">-</div>
                 <div class="progress-container">
@@ -1212,53 +859,53 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab active" onclick="switchTab('users')">
-                <i class="fas fa-users"></i>
-                <span>Users</span>
+                <i class="fas fa-users"></i> Users
             </button>
             <button class="tab" onclick="switchTab('add')">
-                <i class="fas fa-plus"></i>
-                <span>Add User</span>
+                <i class="fas fa-plus"></i> Add User
             </button>
             <button class="tab" onclick="switchTab('games')">
-                <i class="fas fa-gamepad"></i>
-                <span>Games</span>
+                <i class="fas fa-gamepad"></i> Games
             </button>
             <button class="tab" onclick="switchTab('logs')">
-                <i class="fas fa-chart-line"></i>
-                <span>Logs</span>
+                <i class="fas fa-history"></i> Logs
             </button>
         </div>
-        
+
         <!-- Tab: Users -->
         <div class="tab-content glass active" id="tab-users">
-            <h2>VIP Users Management</h2>
+            <h2><i class="fas fa-users"></i> VIP Users Management</h2>
             <div class="search-container">
-                <input type="text" class="search-input" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()">
+                <input type="text" class="search-input" id="userSearch" placeholder="Search users..." onkeyup="filterTable('usersTable', this.value)">
                 <i class="fas fa-search search-icon"></i>
             </div>
-            <button onclick="loadUsers()" class="btn-secondary">🔄 Refresh</button>
-            <div class="table-container" id="usersTable"></div>
+            <button onclick="loadUsers()" class="btn-secondary">
+                <i class="fas fa-sync-alt"></i> Refresh
+            </button>
+            <div class="table-container" id="usersTable">
+                <div class="spinner"></div>
+            </div>
         </div>
-        
+
         <!-- Tab: Add User -->
         <div class="tab-content glass" id="tab-add">
-            <h2>Add New VIP User</h2>
+            <h2><i class="fas fa-user-plus"></i> Add New VIP User</h2>
             <div class="grid-2">
                 <div>
                     <div class="form-group">
-                        <label>Roblox User ID</label>
-                        <input type="text" id="newUserId" placeholder="123456789">
+                        <label><i class="fas fa-id-card"></i> Roblox User ID *</label>
+                        <input type="text" id="newUserId" placeholder="123456789" required>
                     </div>
                     <div class="form-group">
-                        <label>Username</label>
+                        <label><i class="fas fa-user"></i> Username</label>
                         <input type="text" id="newUsername" placeholder="PlayerName">
                     </div>
                     <div class="form-group">
-                        <label>Tier</label>
+                        <label><i class="fas fa-crown"></i> Tier</label>
                         <select id="newTier">
                             <option value="basic">Basic</option>
                             <option value="premium">Premium</option>
@@ -1268,118 +915,492 @@
                 </div>
                 <div>
                     <div class="form-group">
-                        <label>Custom Key (optional)</label>
+                        <label><i class="fas fa-key"></i> Custom Key (optional)</label>
                         <input type="text" id="newKey" placeholder="Leave empty for auto-generate">
-                        <button onclick="generateRandomKey()" class="btn-secondary" style="margin-top: 10px;">🎲 Generate Key</button>
+                        <button onclick="generateRandomKey()" class="btn-secondary mt-1">
+                            <i class="fas fa-dice"></i> Generate Key
+                        </button>
                     </div>
                     <div class="form-group">
-                        <label>Duration (Days)</label>
-                        <input type="number" id="newDays" value="30" min="1">
+                        <label><i class="fas fa-calendar-alt"></i> Duration (Days)</label>
+                        <input type="number" id="newDays" value="30" min="1" max="365">
                     </div>
                 </div>
             </div>
-            <button onclick="addUser()" class="btn-success">➕ Add User</button>
+            <button onclick="addUser()" class="btn-success" id="addUserBtn">
+                <i class="fas fa-plus"></i> Add User
+            </button>
             <div id="addResult"></div>
         </div>
-        
+
         <!-- Tab: Games -->
         <div class="tab-content glass" id="tab-games">
-            <h2>🎮 Game Scripts Management</h2>
+            <h2><i class="fas fa-gamepad"></i> Game Scripts Management</h2>
             <p style="color: var(--text-muted); margin-bottom: 20px;">
-                Manage your game scripts with automatic update tracking
+                Manage your game scripts with automatic version tracking
             </p>
-            
+
             <!-- Add New Game -->
-            <div style="background: rgba(59, 130, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary);" class="card-hover">
-                <h3 style="color: var(--primary); margin-bottom: 15px;">➕ Add New Game</h3>
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary);">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">
+                    <i class="fas fa-plus-circle"></i> Add New Game
+                </h3>
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Place ID</label>
-                        <input type="text" id="newPlaceId" placeholder="606849621">
+                        <label><i class="fas fa-hashtag"></i> Place ID *</label>
+                        <input type="text" id="newPlaceId" placeholder="606849621" required>
                     </div>
                     <div class="form-group">
-                        <label>Game Name</label>
-                        <input type="text" id="newGameName" placeholder="Jailbreak">
+                        <label><i class="fas fa-tag"></i> Game Name *</label>
+                        <input type="text" id="newGameName" placeholder="Jailbreak" required>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Script URL (Raw Link)</label>
-                    <input type="text" id="newScriptUrl" placeholder="https://raw.githubusercontent.com/... or https://pastefy.app/...">
+                    <label><i class="fas fa-link"></i> Script URL (Raw Link) *</label>
+                    <input type="url" id="newScriptUrl" placeholder="https://raw.githubusercontent.com/..." required>
                     <small style="color: var(--text-muted); display: block; margin-top: 5px;">
-                        💡 Use raw links from GitHub, Pastefy, Pastebin, or any direct script URL
+                        💡 Use raw links from GitHub, Pastefy, or Pastebin
                     </small>
                 </div>
-                <button onclick="addGame()" class="btn-success">➕ Add Game</button>
+                <button onclick="addGame()" class="btn-success" id="addGameBtn">
+                    <i class="fas fa-plus"></i> Add Game
+                </button>
                 <div id="addGameResult"></div>
             </div>
-            
+
             <!-- Update Script -->
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--success);" class="card-hover">
-                <h3 style="color: var(--success); margin-bottom: 15px;">🔄 Update Existing Script</h3>
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--success);">
+                <h3 style="color: var(--success); margin-bottom: 15px;">
+                    <i class="fas fa-sync-alt"></i> Update Existing Script
+                </h3>
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Select Game</label>
+                        <label><i class="fas fa-list"></i> Select Game</label>
                         <select id="updateGameSelect">
                             <option value="">-- Select a game --</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>New Script URL</label>
-                        <input type="text" id="updateScriptUrl" placeholder="https://raw.githubusercontent.com/...">
+                        <label><i class="fas fa-link"></i> New Script URL</label>
+                        <input type="url" id="updateScriptUrl" placeholder="https://raw.githubusercontent.com/...">
                     </div>
                 </div>
-                <button onclick="updateScript()" class="btn-success">🔄 Update Script</button>
+                <button onclick="updateScript()" class="btn-success" id="updateScriptBtn">
+                    <i class="fas fa-sync-alt"></i> Update Script
+                </button>
                 <div id="updateScriptResult"></div>
             </div>
-            
+
             <!-- Games List -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="color: var(--primary);">📊 All Games</h3>
-                <button onclick="loadGames()" class="btn-secondary">🔄 Refresh</button>
+                <h3 style="color: var(--primary);">
+                    <i class="fas fa-list"></i> All Games
+                </h3>
+                <button onclick="loadGames()" class="btn-secondary">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
             </div>
-            
+
             <div class="table-container" id="gamesTable">
-                <p style="text-align: center; color: var(--text-muted); padding: 40px;">
-                    Click refresh to load games
-                </p>
+                <div class="spinner"></div>
             </div>
         </div>
-        
+
         <!-- Tab: Logs -->
         <div class="tab-content glass" id="tab-logs">
-            <h2>Login Activity Logs</h2>
+            <h2><i class="fas fa-history"></i> Login Activity Logs</h2>
             <div class="grid-2">
                 <div class="form-group">
-                    <label>Filter by User ID</label>
+                    <label><i class="fas fa-filter"></i> Filter by User ID</label>
                     <input type="text" id="filterUserId" placeholder="Optional">
                 </div>
                 <div class="form-group">
                     <label>&nbsp;</label>
                     <div class="action-buttons">
-                        <button onclick="loadLogs()">🔍 Filter</button>
-                        <button onclick="clearLogsFilter()" class="btn-secondary">Clear</button>
+                        <button onclick="loadLogs()">
+                            <i class="fas fa-search"></i> Filter
+                        </button>
+                        <button onclick="clearLogsFilter()" class="btn-secondary">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="table-container" id="logsTable"></div>
+            <div class="table-container" id="logsTable">
+                <div class="spinner"></div>
+            </div>
         </div>
     </div>
-    
-    <!-- Floating Action Button -->
-    <button class="fab" id="fab" onclick="scrollToTop()">
-        <i class="fas fa-arrow-up"></i>
-    </button>
-    
+
     <script>
+        'use strict';
+
         // ===== CONFIGURATION =====
-        let API_URL = 'https://zullstore21.workers.dev'; // CHANGE THIS!
-        let API_KEY = 'admin'; // CHANGE THIS!
-        
-        let currentGames = [];
-        let isDarkMode = false;
-        
-        // ===== UTILITIES =====
-        
+        const CONFIG = {
+            API_URL: '',
+            API_KEY: '',
+            SESSION_TIMEOUT: 3600000, // 1 hour
+            REFRESH_INTERVAL: 30000, // 30 seconds
+            MAX_RETRIES: 3
+        };
+
+        // ===== STATE MANAGEMENT =====
+        const state = {
+            currentGames: [],
+            sessionStart: null,
+            lastActivity: Date.now(),
+            retryCount: 0
+        };
+
+        // ===== SECURITY UTILITIES =====
+        const Security = {
+            // XSS Prevention
+            escapeHtml(text) {
+                const map = {
+                    '&': '&amp;',
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '"': '&quot;',
+                    "'": '&#039;'
+                };
+                return String(text).replace(/[&<>"']/g, m => map[m]);
+            },
+
+            // Validate URL
+            isValidUrl(string) {
+                try {
+                    const url = new URL(string);
+                    return url.protocol === 'http:' || url.protocol === 'https:';
+                } catch (_) {
+                    return false;
+                }
+            },
+
+            // Sanitize input
+            sanitizeInput(input) {
+                return input.trim().replace(/[<>]/g, '');
+            },
+
+            // Check session timeout
+            checkSession() {
+                const now = Date.now();
+                if (now - state.lastActivity > CONFIG.SESSION_TIMEOUT) {
+                    this.sessionExpired();
+                    return false;
+                }
+                state.lastActivity = now;
+                return true;
+            },
+
+            sessionExpired() {
+                showNotification('Session expired. Please login again.', 'error');
+                setTimeout(() => logout(), 2000);
+            }
+        };
+
+        // ===== API UTILITIES =====
+        const API = {
+            async call(endpoint, method = 'GET', body = null) {
+                if (!Security.checkSession()) return null;
+
+                const options = {
+                    method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': CONFIG.API_KEY
+                    }
+                };
+
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+
+                try {
+                    const response = await fetch(CONFIG.API_URL + endpoint, options);
+                    
+                    if (response.status === 429) {
+                        throw new Error('Rate limit exceeded. Please wait a moment.');
+                    }
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || data.error || `HTTP ${response.status}`);
+                    }
+
+                    state.retryCount = 0;
+                    return data;
+                } catch (error) {
+                    if (state.retryCount < CONFIG.MAX_RETRIES) {
+                        state.retryCount++;
+                        await new Promise(resolve => setTimeout(resolve, 1000 * state.retryCount));
+                        return this.call(endpoint, method, body);
+                    }
+                    throw error;
+                }
+            }
+        };
+
+        // ===== UI UTILITIES =====
+        const UI = {
+            showAlert(elementId, message, type = 'success') {
+                const elem = document.getElementById(elementId);
+                if (!elem) return;
+
+                elem.innerHTML = `<div class="alert alert-${type}">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    ${message}
+                </div>`;
+
+                if (type === 'success') {
+                    setTimeout(() => elem.innerHTML = '', 5000);
+                }
+            },
+
+            setLoading(elementId, isLoading) {
+                const elem = document.getElementById(elementId);
+                if (!elem) return;
+
+                if (isLoading) {
+                    elem.innerHTML = '<div style="text-align: center; padding: 40px;"><div class="spinner"></div><p style="color: var(--text-muted); margin-top: 10px;">Loading...</p></div>';
+                }
+            },
+
+            disableButton(buttonId, isDisabled) {
+                const btn = document.getElementById(buttonId);
+                if (btn) {
+                    btn.disabled = isDisabled;
+                    btn.innerHTML = isDisabled ? 
+                        '<i class="fas fa-spinner fa-spin"></i> Processing...' : 
+                        btn.getAttribute('data-original-text');
+                }
+            },
+
+            formatTimeAgo(timestamp) {
+                const now = new Date();
+                const past = new Date(timestamp);
+                const diffMs = now - past;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMins / 60);
+                const diffDays = Math.floor(diffHours / 24);
+
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins}m ago`;
+                if (diffHours < 24) return `${diffHours}h ago`;
+                if (diffDays < 7) return `${diffDays}d ago`;
+                return past.toLocaleDateString();
+            },
+
+            animateProgress(id, value, max) {
+                const bar = document.getElementById(id);
+                if (!bar) return;
+
+                const percentage = Math.min((value / max) * 100, 100);
+                setTimeout(() => bar.style.width = `${percentage}%`, 100);
+            }
+        };
+
+        // ===== NOTIFICATION SYSTEM =====
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                ${message}
+            `;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // ===== AUTHENTICATION =====
+        async function login() {
+            const urlInput = document.getElementById('apiUrl');
+            const keyInput = document.getElementById('apiKey');
+            const loginBtn = document.getElementById('loginBtn');
+
+            CONFIG.API_URL = Security.sanitizeInput(urlInput.value);
+            CONFIG.API_KEY = Security.sanitizeInput(keyInput.value);
+
+            if (!CONFIG.API_URL || !CONFIG.API_KEY) {
+                UI.showAlert('loginError', '⚠️ Please fill all fields', 'error');
+                return;
+            }
+
+            if (!Security.isValidUrl(CONFIG.API_URL)) {
+                UI.showAlert('loginError', '⚠️ Invalid API URL', 'error');
+                return;
+            }
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+
+            try {
+                UI.showAlert('loginError', '🔄 Authenticating...', 'info');
+                await API.call('/admin/list-users');
+
+                // Save to secure session storage (not localStorage for security)
+                sessionStorage.setItem('api_url', CONFIG.API_URL);
+                sessionStorage.setItem('api_key_hash', btoa(CONFIG.API_KEY)); // Basic encoding
+
+                state.sessionStart = Date.now();
+                state.lastActivity = Date.now();
+
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+
+                showNotification('Login successful! Welcome to WiseHub Admin', 'success');
+
+                // Load data
+                await Promise.all([
+                    loadStats(),
+                    loadUsers(),
+                    loadGames()
+                ]);
+
+                // Start auto-refresh
+                startAutoRefresh();
+
+            } catch (error) {
+                UI.showAlert('loginError', `❌ Login failed: ${error.message}`, 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+            }
+        }
+
+        function logout() {
+            if (!confirm('Are you sure you want to logout?')) return;
+
+            // Clear session
+            sessionStorage.clear();
+            CONFIG.API_URL = '';
+            CONFIG.API_KEY = '';
+            state.sessionStart = null;
+
+            // Stop auto-refresh
+            if (window.refreshInterval) {
+                clearInterval(window.refreshInterval);
+            }
+
+            document.getElementById('loginSection').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('apiUrl').value = '';
+            document.getElementById('apiKey').value = '';
+
+            showNotification('Logged out successfully', 'info');
+        }
+
+        // ===== STATS =====
+        async function loadStats() {
+            try {
+                const stats = await API.call('/admin/stats');
+
+                document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('activeUsers').textContent = stats.activeUsers || 0;
+                document.getElementById('todayLogins').textContent = stats.todayLogins || 0;
+                document.getElementById('totalGames').textContent = stats.totalGames || 0;
+
+                UI.animateProgress('usersProgress', stats.totalUsers || 0, 100);
+                UI.animateProgress('activeProgress', stats.activeUsers || 0, stats.totalUsers || 1);
+                UI.animateProgress('loginsProgress', stats.todayLogins || 0, 50);
+                UI.animateProgress('gamesProgress', stats.totalGames || 0, 20);
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        function showStatDetails(statType) {
+            const details = {
+                users: {
+                    title: 'Total Users',
+                    text: 'This represents all registered users in your system, both active and inactive.',
+                    icon: 'info'
+                },
+                active: {
+                    title: 'Active Users',
+                    text: 'Users with valid (non-expired) subscriptions who can currently access your scripts.',
+                    icon: 'success'
+                },
+                logins: {
+                    title: "Today's Logins",
+                    text: 'Number of successful authentication attempts today. Tracks daily user engagement.',
+                    icon: 'info'
+                },
+                games: {
+                    title: 'Total Games',
+                    text: 'Number of game scripts currently available in your system.',
+                    icon: 'info'
+                }
+            };
+
+            const detail = details[statType];
+            if (detail) {
+                Swal.fire({
+                    title: detail.title,
+                    text: detail.text,
+                    icon: detail.icon,
+                    confirmButtonText: 'Got it'
+                });
+            }
+        }
+
+        // ===== USER MANAGEMENT =====
+        async function loadUsers() {
+            UI.setLoading('usersTable', true);
+
+            try {
+                const users = await API.call('/admin/list-users');
+                let html = '<table><thead><tr><th>User ID</th><th>Username</th><th>Tier</th><th>Key</th><th>Expiry</th><th>Status</th><th>HWID</th><th>Logins</th><th>Actions</th></tr></thead><tbody>';
+
+                if (Array.isArray(users) && users.length > 0) {
+                    users.forEach(user => {
+                        const expiry = new Date(user.expiry_date);
+                        const isExpired = expiry < new Date();
+                        const tierClass = `badge-${user.tier}`;
+                        const statusClass = user.is_active && !isExpired ? 'badge-active' : 'badge-inactive';
+                        const statusText = user.is_active && !isExpired ? 'Active' : 'Inactive';
+                        const daysLeft = Math.ceil((expiry - new Date()) / (1000 * 60 * 60 * 24));
+
+                        html += `
+                            <tr>
+                                <td><code>${Security.escapeHtml(user.user_id)}</code></td>
+                                <td>${Security.escapeHtml(user.username || 'N/A')}</td>
+                                <td><span class="badge ${tierClass}">${user.tier}</span></td>
+                                <td><code>${Security.escapeHtml(user.key)}</code></td>
+                                <td>
+                                    ${expiry.toLocaleDateString()}
+                                    ${!isExpired ? `<br><small style="color: var(--success);">${daysLeft} days left</small>` : '<br><small style="color: var(--danger);">Expired</small>'}
+                                </td>
+                                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                                <td>${user.hwid ? '<code>Locked</code>' : '<span style="color: var(--text-muted);">Not Set</span>'}</td>
+                                <td>${user.login_count || 0}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn-small btn-secondary" onclick="resetHWID('${Security.escapeHtml(user.user_id)}')">
+                                            <i class="fas fa-redo"></i> Reset HWID
+                                        </button>
+                                        <button class="btn-small btn-danger" onclick="removeUser('${Security.escapeHtml(user.user_id)}')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += '<tr><td colspan="9" class="text-center" style="color: var(--text-muted); padding: 40px;">No users found</td></tr>';
+                }
+
+                html += '</tbody></table>';
+                document.getElementById('usersTable').innerHTML = html;
+            } catch (error) {
+                document.getElementById('usersTable').innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
+            }
+        }
+
         function generateRandomKey() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let key = 'WISE-';
@@ -1389,260 +1410,72 @@
             }
             document.getElementById('newKey').value = key;
         }
-        
-        async function apiCall(endpoint, method = 'GET', body = null) {
-            const options = {
-                method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-api-key': API_KEY
-                }
-            };
-            if (body) options.body = JSON.stringify(body);
-            
-            const response = await fetch(API_URL + endpoint, options);
-            const data = await response.json();
-            
-            if (!response.ok) {
-                throw new Error(data.message || data.error || 'API Error');
-            }
-            return data;
-        }
-        
-        function showAlert(id, message, type = 'success') {
-            const elem = document.getElementById(id);
-            if (elem) {
-                elem.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-                if (type === 'success') {
-                    setTimeout(() => elem.innerHTML = '', 5000);
-                }
-            }
-        }
-        
-        function showNotification(message, type = 'info') {
-            const notification = document.getElementById('notification');
-            notification.className = `notification ${type}`;
-            notification.innerHTML = message;
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-        
-        function formatTimeAgo(timestamp) {
-            const now = new Date();
-            const past = new Date(timestamp);
-            const diffMs = now - past;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMins / 60);
-            const diffDays = Math.floor(diffHours / 24);
-            
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins} min ago`;
-            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-            return past.toLocaleDateString();
-        }
-        
-        // ===== AUTHENTICATION =====
-        
-        async function login() {
-            API_URL = document.getElementById('apiUrl').value.trim();
-            API_KEY = document.getElementById('apiKey').value.trim();
-            
-            if (!API_URL || !API_KEY) {
-                showAlert('loginError', '⚠️ Please fill all fields', 'error');
-                return;
-            }
-            
-            try {
-                showAlert('loginError', '🔄 Authenticating...', 'info');
-                await apiCall('/admin/list-users');
-                
-                document.getElementById('loginSection').style.display = 'none';
-                document.getElementById('dashboard').style.display = 'block';
-                
-                loadStats();
-                loadUsers();
-                loadGames();
-                
-                showNotification('Login successful! Welcome to WiseHub Admin', 'success');
-            } catch (error) {
-                showAlert('loginError', '❌ Login failed: ' + error.message, 'error');
-            }
-        }
-        
-        function logout() {
-            if (!confirm('Are you sure you want to logout?')) return;
-            API_URL = '';
-            API_KEY = '';
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('apiUrl').value = '';
-            document.getElementById('apiKey').value = '';
-            
-            showNotification('Logged out successfully', 'info');
-        }
-        
-        // ===== STATS =====
-        
-        async function loadStats() {
-            try {
-                const stats = await apiCall('/admin/stats');
-                document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
-                document.getElementById('activeUsers').textContent = stats.activeUsers || 0;
-                document.getElementById('todayLogins').textContent = stats.todayLogins || 0;
-                document.getElementById('totalGames').textContent = stats.totalGames || 0;
-                
-                // Animate progress bars
-                animateProgress('usersProgress', stats.totalUsers || 0, 100);
-                animateProgress('activeProgress', stats.activeUsers || 0, stats.totalUsers || 1);
-                animateProgress('loginsProgress', stats.todayLogins || 0, 50);
-                animateProgress('gamesProgress', stats.totalGames || 0, 20);
-            } catch (error) {
-                console.error('Stats error:', error);
-            }
-        }
-        
-        function animateProgress(id, value, max) {
-            const progressBar = document.getElementById(id);
-            if (!progressBar) return;
-            
-            const percentage = Math.min((value / max) * 100, 100);
-            progressBar.style.width = '0%';
-            
-            setTimeout(() => {
-                progressBar.style.width = `${percentage}%`;
-            }, 100);
-        }
-        
-        function showStatDetails(statType) {
-            let title, content;
-            
-            switch (statType) {
-                case 'users':
-                    title = 'Total Users';
-                    content = 'This represents the total number of registered users in your system.';
-                    break;
-                case 'active':
-                    title = 'Active Users';
-                    content = 'These are users who have logged in within the last 30 days.';
-                    break;
-                case 'logins':
-                    title = 'Today\'s Logins';
-                    content = 'Number of successful logins today across all users.';
-                    break;
-                case 'games':
-                    title = 'Total Games';
-                    content = 'Number of games registered in your system.';
-                    break;
-            }
-            
-            Swal.fire({
-                title: title,
-                text: content,
-                icon: 'info',
-                confirmButtonText: 'Got it'
-            });
-        }
-        
-        // ===== USER MANAGEMENT =====
-        
-        async function loadUsers() {
-            try {
-                const users = await apiCall('/admin/list-users');
-                let html = '<table><thead><tr><th>User ID</th><th>Username</th><th>Tier</th><th>Key</th><th>Expiry</th><th>Status</th><th>HWID</th><th>Logins</th><th>Actions</th></tr></thead><tbody>';
-                
-                if (Array.isArray(users) && users.length > 0) {
-                    users.forEach(user => {
-                        const expiry = new Date(user.expiry_date);
-                        const isExpired = expiry < new Date();
-                        const tierClass = `badge-${user.tier}`;
-                        const statusClass = user.is_active && !isExpired ? 'badge-active' : 'badge-inactive';
-                        const statusText = user.is_active && !isExpired ? 'Active' : 'Inactive';
-                        
-                        html += `
-                            <tr>
-                                <td><code>${user.user_id}</code></td>
-                                <td>${user.username || 'N/A'}</td>
-                                <td><span class="badge ${tierClass}">${user.tier}</span></td>
-                                <td><code>${user.key}</code></td>
-                                <td>${expiry.toLocaleDateString()}</td>
-                                <td><span class="badge ${statusClass}">${statusText}</span></td>
-                                <td>${user.hwid ? '<code>Locked</code>' : '<span style="color: #94a3b8;">Not Set</span>'}</td>
-                                <td>${user.login_count || 0}</td>
-                                <td>
-                                    <div class="action-buttons">
-                                        <button class="btn-small btn-secondary" onclick="resetHWID('${user.user_id}')">Reset HWID</button>
-                                        <button class="btn-small btn-danger" onclick="removeUser('${user.user_id}')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    html += '<tr><td colspan="9" style="text-align: center; color: var(--text-muted);">No users found</td></tr>';
-                }
-                
-                html += '</tbody></table>';
-                document.getElementById('usersTable').innerHTML = html;
-            } catch (error) {
-                document.getElementById('usersTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
-            }
-        }
-        
-        function filterUsers() {
-            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
-            const rows = document.querySelectorAll('#usersTable tbody tr');
-            
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
-            });
-        }
-        
+
         async function addUser() {
-            const userId = document.getElementById('newUserId').value.trim();
-            const username = document.getElementById('newUsername').value.trim();
-            const key = document.getElementById('newKey').value.trim();
+            const userId = Security.sanitizeInput(document.getElementById('newUserId').value);
+            const username = Security.sanitizeInput(document.getElementById('newUsername').value);
+            const key = Security.sanitizeInput(document.getElementById('newKey').value);
             const tier = document.getElementById('newTier').value;
-            const days = document.getElementById('newDays').value;
-            
+            const days = parseInt(document.getElementById('newDays').value);
+
             if (!userId || !days) {
-                showAlert('addResult', '⚠️ User ID and Days are required!', 'error');
+                UI.showAlert('addResult', '⚠️ User ID and Days are required!', 'error');
                 return;
             }
-            
+
+            if (days < 1 || days > 365) {
+                UI.showAlert('addResult', '⚠️ Days must be between 1 and 365', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('addUserBtn');
+            btn.setAttribute('data-original-text', btn.innerHTML);
+            UI.disableButton('addUserBtn', true);
+
             try {
-                await apiCall('/admin/add-user', 'POST', {
+                await API.call('/admin/add-user', 'POST', {
                     userId,
                     username: username || undefined,
                     key: key || undefined,
                     tier,
-                    days: parseInt(days)
+                    days
                 });
+
+                UI.showAlert('addResult', `✅ User ${userId} added successfully!`, 'success');
                 
-                showAlert('addResult', `✅ User ${userId} added successfully!`, 'success');
+                // Clear form
                 document.getElementById('newUserId').value = '';
                 document.getElementById('newUsername').value = '';
                 document.getElementById('newKey').value = '';
                 document.getElementById('newDays').value = '30';
-                
+
                 loadUsers();
                 loadStats();
-                
-                showNotification(`User ${userId} added successfully!`, 'success');
+                showNotification(`User ${userId} added!`, 'success');
             } catch (error) {
-                showAlert('addResult', `❌ Error: ${error.message}`, 'error');
+                UI.showAlert('addResult', `❌ Error: ${error.message}`, 'error');
+            } finally {
+                UI.disableButton('addUserBtn', false);
             }
         }
-        
+
         async function removeUser(userId) {
-            if (!confirm(`Delete user ${userId}? This cannot be undone!`)) return;
-            
+            const result = await Swal.fire({
+                title: 'Delete User?',
+                html: `Are you sure you want to delete user <strong>${userId}</strong>?<br><br>⚠️ This action cannot be undone!`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '<i class="fas fa-trash"></i> Yes, Delete',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (!result.isConfirmed) return;
+
             try {
-                await apiCall('/admin/remove-user', 'POST', { userId });
+                await API.call('/admin/remove-user', 'POST', { userId });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'Deleted!',
@@ -1650,20 +1483,32 @@
                     timer: 2000,
                     showConfirmButton: false
                 });
+
                 loadUsers();
                 loadStats();
-                
-                showNotification(`User ${userId} has been removed`, 'success');
+                showNotification(`User ${userId} deleted`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
         }
-        
+
         async function resetHWID(userId) {
-            if (!confirm(`Reset HWID for user ${userId}?`)) return;
-            
+            const result = await Swal.fire({
+                title: 'Reset HWID?',
+                text: `Reset HWID for user ${userId}? They will be able to login from a different device.`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '<i class="fas fa-redo"></i> Yes, Reset',
+                cancelButtonText: 'Cancel'
+            });
+
+            if (!result.isConfirmed) return;
+
             try {
-                await apiCall('/admin/reset-hwid', 'POST', { userId });
+                await API.call('/admin/reset-hwid', 'POST', { userId });
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'Reset!',
@@ -1671,21 +1516,22 @@
                     timer: 2000,
                     showConfirmButton: false
                 });
+
                 loadUsers();
-                
-                showNotification(`HWID reset for user ${userId}`, 'success');
+                showNotification(`HWID reset for ${userId}`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
         }
-        
+
         // ===== GAME MANAGEMENT =====
-        
         async function loadGames() {
+            UI.setLoading('gamesTable', true);
+
             try {
-                const games = await apiCall('/admin/list-games');
-                currentGames = games;
-                
+                const games = await API.call('/admin/list-games');
+                state.currentGames = games;
+
                 // Populate update select
                 const select = document.getElementById('updateGameSelect');
                 select.innerHTML = '<option value="">-- Select a game --</option>';
@@ -1697,265 +1543,231 @@
                         select.appendChild(option);
                     });
                 }
-                
+
                 // Build table
-                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Updates</th><th>Last Updated</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
-                
+                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Last Updated</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+
                 if (Array.isArray(games) && games.length > 0) {
                     games.forEach(game => {
                         const statusClass = game.is_active ? 'badge-active' : 'badge-inactive';
                         const statusText = game.is_active ? 'Active' : 'Disabled';
-                        const updateCount = game.update_count || 0;
-                        const lastUpdated = game.last_updated ? formatTimeAgo(game.last_updated) : 'Never';
-                        
+                        const lastUpdated = game.updated_at ? UI.formatTimeAgo(game.updated_at) : 'Never';
+
                         html += `
                             <tr>
-                                <td><strong>${game.game_name}</strong></td>
-                                <td><code>${game.place_id}</code></td>
-                                <td><code>${game.version || 'v0'}</code></td>
-                                <td><span class="update-badge">${updateCount} update${updateCount !== 1 ? 's' : ''}</span></td>
-                                <td>
-                                    <div>${lastUpdated}</div>
-                                    <div class="time-info">${new Date(game.last_updated || game.created_at).toLocaleString()}</div>
-                                </td>
+                                <td><strong>${Security.escapeHtml(game.game_name)}</strong></td>
+                                <td><code>${Security.escapeHtml(game.place_id)}</code></td>
+                                <td><code>${Security.escapeHtml(game.version || '1.0')}</code></td>
+                                <td>${lastUpdated}</td>
                                 <td><span class="badge ${statusClass}">${statusText}</span></td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn-small btn-secondary" onclick="viewHistory('${game.place_id}', '${game.game_name}')">📜 History</button>
                                         <button class="btn-small ${game.is_active ? 'btn-danger' : 'btn-success'}" 
-                                            onclick="toggleGame('${game.place_id}', ${!game.is_active})">
-                                            ${game.is_active ? '🔴 Disable' : '🟢 Enable'}
+                                            onclick="toggleGame('${Security.escapeHtml(game.place_id)}', ${!game.is_active})">
+                                            <i class="fas fa-${game.is_active ? 'ban' : 'check'}"></i>
+                                            ${game.is_active ? 'Disable' : 'Enable'}
                                         </button>
-                                        <button class="btn-small btn-danger" onclick="deleteGame('${game.place_id}', '${game.game_name}')">🗑️ Delete</button>
+                                        <button class="btn-small btn-danger" 
+                                            onclick="deleteGame('${Security.escapeHtml(game.place_id)}', '${Security.escapeHtml(game.game_name)}')">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
                         `;
                     });
                 } else {
-                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No games found. Add one above!</td></tr>';
+                    html += '<tr><td colspan="6" class="text-center" style="color: var(--text-muted); padding: 40px;">No games found. Add one above!</td></tr>';
                 }
-                
+
                 html += '</tbody></table>';
                 document.getElementById('gamesTable').innerHTML = html;
-                
             } catch (error) {
-                document.getElementById('gamesTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+                document.getElementById('gamesTable').innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
             }
         }
-        
+
         async function addGame() {
-            const placeId = document.getElementById('newPlaceId').value.trim();
-            const gameName = document.getElementById('newGameName').value.trim();
-            const scriptUrl = document.getElementById('newScriptUrl').value.trim();
-            
+            const placeId = Security.sanitizeInput(document.getElementById('newPlaceId').value);
+            const gameName = Security.sanitizeInput(document.getElementById('newGameName').value);
+            const scriptUrl = Security.sanitizeInput(document.getElementById('newScriptUrl').value);
+
             if (!placeId || !gameName || !scriptUrl) {
-                showAlert('addGameResult', '⚠️ All fields are required!', 'error');
+                UI.showAlert('addGameResult', '⚠️ All fields are required!', 'error');
                 return;
             }
-            
-            // Validate URL
-            try {
-                new URL(scriptUrl);
-            } catch (e) {
-                showAlert('addGameResult', '⚠️ Invalid URL format!', 'error');
+
+            if (!Security.isValidUrl(scriptUrl)) {
+                UI.showAlert('addGameResult', '⚠️ Invalid URL format!', 'error');
                 return;
             }
-            
+
+            const btn = document.getElementById('addGameBtn');
+            btn.setAttribute('data-original-text', btn.innerHTML);
+            UI.disableButton('addGameBtn', true);
+
             try {
-                const result = await apiCall('/admin/add-game', 'POST', {
+                await API.call('/admin/add-game', 'POST', {
                     placeId,
                     gameName,
                     scriptUrl
                 });
+
+                UI.showAlert('addGameResult', `✅ ${gameName} added successfully!`, 'success');
                 
-                showAlert('addGameResult', `✅ ${gameName} added successfully!`, 'success');
                 document.getElementById('newPlaceId').value = '';
                 document.getElementById('newGameName').value = '';
                 document.getElementById('newScriptUrl').value = '';
-                
+
                 loadGames();
                 loadStats();
-                
-                showNotification(`Game ${gameName} added successfully!`, 'success');
+                showNotification(`Game ${gameName} added!`, 'success');
             } catch (error) {
-                showAlert('addGameResult', `❌ Error: ${error.message}`, 'error');
+                UI.showAlert('addGameResult', `❌ Error: ${error.message}`, 'error');
+            } finally {
+                UI.disableButton('addGameBtn', false);
             }
         }
-        
+
         async function updateScript() {
             const placeId = document.getElementById('updateGameSelect').value;
-            const scriptUrl = document.getElementById('updateScriptUrl').value.trim();
-            
+            const scriptUrl = Security.sanitizeInput(document.getElementById('updateScriptUrl').value);
+
             if (!placeId) {
-                showAlert('updateScriptResult', '⚠️ Please select a game', 'error');
+                UI.showAlert('updateScriptResult', '⚠️ Please select a game', 'error');
                 return;
             }
-            
+
             if (!scriptUrl) {
-                showAlert('updateScriptResult', '⚠️ Script URL is required!', 'error');
+                UI.showAlert('updateScriptResult', '⚠️ Script URL is required!', 'error');
                 return;
             }
-            
-            // Validate URL
-            try {
-                new URL(scriptUrl);
-            } catch (e) {
-                showAlert('updateScriptResult', '⚠️ Invalid URL format!', 'error');
+
+            if (!Security.isValidUrl(scriptUrl)) {
+                UI.showAlert('updateScriptResult', '⚠️ Invalid URL format!', 'error');
                 return;
             }
-            
+
+            const btn = document.getElementById('updateScriptBtn');
+            btn.setAttribute('data-original-text', btn.innerHTML);
+            UI.disableButton('updateScriptBtn', true);
+
             try {
-                const result = await apiCall('/admin/update-script', 'POST', {
+                const result = await API.call('/admin/update-script', 'POST', {
                     placeId,
                     scriptUrl
                 });
-                
-                showAlert('updateScriptResult', `✅ ${result.data.gameName} updated to ${result.data.version}!<br>Total updates: ${result.data.updateCount}`, 'success');
+
+                UI.showAlert('updateScriptResult', `✅ Script updated to version ${result.version}!`, 'success');
                 document.getElementById('updateScriptUrl').value = '';
-                
+
                 loadGames();
-                
-                showNotification(`Script updated to version ${result.data.version}`, 'success');
+                showNotification(`Script updated to version ${result.version}`, 'success');
             } catch (error) {
-                showAlert('updateScriptResult', `❌ Error: ${error.message}`, 'error');
+                UI.showAlert('updateScriptResult', `❌ Error: ${error.message}`, 'error');
+            } finally {
+                UI.disableButton('updateScriptBtn', false);
             }
         }
-        
-        async function viewHistory(placeId, gameName) {
-            try {
-                const result = await apiCall(`/admin/script-history?placeId=${placeId}`);
-                
-                if (!result.history || result.history.length === 0) {
-                    Swal.fire('No History', 'No update history found for this game', 'info');
-                    return;
-                }
-                
-                let historyHtml = '<table style="width: 100%; color: #f1f5f9;"><thead><tr style="background: rgba(59, 130, 246, 0.1);"><th style="padding: 10px;">Version</th><th style="padding: 10px;">Updated</th><th style="padding: 10px;">Script URL</th></tr></thead><tbody>';
-                
-                result.history.forEach(h => {
-                    const date = new Date(h.updated_at).toLocaleString();
-                    const shortUrl = h.script_url.length > 50 ? h.script_url.substring(0, 50) + '...' : h.script_url;
-                    historyHtml += `
-                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                            <td style="padding: 10px;"><code style="background: rgba(15, 23, 42, 0.8); padding: 4px 8px; border-radius: 6px;">${h.version}</code></td>
-                            <td style="padding: 10px;">${date}</td>
-                            <td style="padding: 10px;"><a href="${h.script_url}" target="_blank" style="color: #3b82f6;">${shortUrl}</a></td>
-                        </tr>
-                    `;
-                });
-                historyHtml += '</tbody></table>';
-                
-                Swal.fire({
-                    title: `📜 Update History: ${gameName}`,
-                    html: historyHtml,
-                    width: '800px',
-                    confirmButtonText: 'Close'
-                });
-            } catch (error) {
-                Swal.fire('Error', error.message, 'error');
-            }
-        }
-        
+
         async function toggleGame(placeId, isActive) {
             try {
-                await apiCall('/admin/toggle-game', 'POST', { placeId, isActive });
+                await API.call('/admin/toggle-game', 'POST', { placeId, isActive });
+                
                 Swal.fire({
                     icon: 'success',
                     title: isActive ? 'Game Enabled!' : 'Game Disabled!',
-                    text: `Kill switch ${isActive ? 'deactivated' : 'activated'}`,
+                    text: `Game ${isActive ? 'enabled' : 'disabled'} successfully`,
                     timer: 2000,
                     showConfirmButton: false
                 });
+
                 loadGames();
-                loadStats();
-                
                 showNotification(`Game ${isActive ? 'enabled' : 'disabled'}`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
         }
-        
+
         async function deleteGame(placeId, gameName) {
             const result = await Swal.fire({
                 title: 'Delete Game?',
-                html: `Are you sure you want to delete <strong>${gameName}</strong>?<br><br>⚠️ This will also delete:<br>• All update history<br>• Script data<br><br><strong>This cannot be undone!</strong>`,
+                html: `Are you sure you want to delete <strong>${gameName}</strong>?<br><br>⚠️ This action cannot be undone!`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 cancelButtonColor: '#6b7280',
-                confirmButtonText: '🗑️ Yes, Delete',
+                confirmButtonText: '<i class="fas fa-trash"></i> Yes, Delete',
                 cancelButtonText: 'Cancel'
             });
-            
+
             if (!result.isConfirmed) return;
-            
+
             try {
-                await apiCall('/admin/delete-game', 'POST', { placeId });
+                await API.call('/admin/delete-game', 'POST', { placeId });
                 
                 Swal.fire({
                     icon: 'success',
                     title: 'Deleted!',
-                    text: `${gameName} has been deleted`,
+                    text: `Game ${gameName} has been removed`,
                     timer: 2000,
                     showConfirmButton: false
                 });
-                
+
                 loadGames();
                 loadStats();
-                
-                showNotification(`Game ${gameName} has been deleted`, 'success');
+                showNotification(`Game ${gameName} deleted`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
         }
-        
+
         // ===== LOGS =====
-        
         async function loadLogs() {
+            UI.setLoading('logsTable', true);
+
             try {
-                const userId = document.getElementById('filterUserId').value.trim();
+                const userId = Security.sanitizeInput(document.getElementById('filterUserId').value);
                 const endpoint = userId ? `/admin/logs?userId=${userId}` : '/admin/logs';
-                const logs = await apiCall(endpoint);
-                
+                const logs = await API.call(endpoint);
+
                 let html = '<table><thead><tr><th>Timestamp</th><th>User ID</th><th>Place ID</th><th>IP Address</th><th>HWID</th><th>Status</th><th>Error</th></tr></thead><tbody>';
-                
+
                 if (Array.isArray(logs) && logs.length > 0) {
                     logs.forEach(log => {
                         const statusClass = log.success ? 'badge-active' : 'badge-inactive';
                         const statusText = log.success ? 'Success' : 'Failed';
                         const time = new Date(log.timestamp).toLocaleString();
-                        
+
                         html += `
                             <tr>
                                 <td>${time}</td>
-                                <td><code>${log.user_id}</code></td>
-                                <td><code>${log.place_id || 'N/A'}</code></td>
-                                <td>${log.ip_address || 'N/A'}</td>
+                                <td><code>${Security.escapeHtml(log.user_id)}</code></td>
+                                <td><code>${Security.escapeHtml(log.place_id || 'N/A')}</code></td>
+                                <td>${Security.escapeHtml(log.ip_address || 'N/A')}</td>
                                 <td>${log.hwid ? '<code>Set</code>' : 'N/A'}</td>
                                 <td><span class="badge ${statusClass}">${statusText}</span></td>
-                                <td style="color: var(--text-muted);">${log.error_message || '-'}</td>
+                                <td style="color: var(--text-muted);">${Security.escapeHtml(log.error_message || '-')}</td>
                             </tr>
                         `;
                     });
                 } else {
-                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No logs found</td></tr>';
+                    html += '<tr><td colspan="7" class="text-center" style="color: var(--text-muted); padding: 40px;">No logs found</td></tr>';
                 }
-                
+
                 html += '</tbody></table>';
                 document.getElementById('logsTable').innerHTML = html;
             } catch (error) {
-                document.getElementById('logsTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+                document.getElementById('logsTable').innerHTML = `<div class="alert alert-error"><i class="fas fa-exclamation-circle"></i> Error: ${error.message}</div>`;
             }
         }
-        
+
         function clearLogsFilter() {
             document.getElementById('filterUserId').value = '';
             loadLogs();
         }
-        
+
         // ===== TAB SWITCHING =====
-        
         function switchTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
@@ -1976,108 +1788,148 @@
                 loadLogs();
             }
         }
-        
-        function switchTabMobile(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
+
+        // ===== TABLE FILTER =====
+        function filterTable(tableId, searchTerm) {
+            const table = document.getElementById(tableId);
+            if (!table) return;
             
-            const mobileTabs = document.querySelectorAll('.mobile-tab');
-            mobileTabs.forEach(tab => tab.classList.remove('active'));
+            const rows = table.querySelectorAll('tbody tr');
+            const term = searchTerm.toLowerCase();
             
-            const selectedTab = document.getElementById(`tab-${tabName}`);
-            if (selectedTab) selectedTab.classList.add('active');
-            
-            event.target.closest('.mobile-tab').classList.add('active');
-            
-            toggleMobileMenu();
-            
-            if (tabName === 'users') {
-                loadUsers();
-            } else if (tabName === 'games') {
-                loadGames();
-            } else if (tabName === 'logs') {
-                loadLogs();
-            }
-        }
-        
-        function toggleMobileMenu() {
-            const mobileMenu = document.getElementById('mobileMenu');
-            mobileMenu.classList.toggle('active');
-        }
-        
-        // ===== UI ENHANCEMENTS =====
-        
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            const icon = document.getElementById('darkModeIcon');
-            
-            if (isDarkMode) {
-                document.documentElement.style.setProperty('--dark', '#0a0f1f');
-                document.documentElement.style.setProperty('--darker', '#050810');
-                icon.className = 'fas fa-sun';
-            } else {
-                document.documentElement.style.setProperty('--dark', '#0f172a');
-                document.documentElement.style.setProperty('--darker', '#0a0f1f');
-                icon.className = 'fas fa-moon';
-            }
-        }
-        
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(term) ? '' : 'none';
             });
         }
-        
-        // Show/hide FAB based on scroll position
-        window.addEventListener('scroll', () => {
-            const fab = document.getElementById('fab');
-            if (window.scrollY > 300) {
-                fab.style.display = 'flex';
-            } else {
-                fab.style.display = 'none';
-            }
-        });
-        
-        // ===== AUTO-REFRESH =====
-        
-        setInterval(() => {
-            if (document.getElementById('dashboard').style.display !== 'none') {
-                loadStats();
-            }
-        }, 30000);
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check for saved API credentials
-            const savedApiUrl = localStorage.getItem('apiUrl');
-            const savedApiKey = localStorage.getItem('apiKey');
-            
-            if (savedApiUrl) document.getElementById('apiUrl').value = savedApiUrl;
-            if (savedApiKey) document.getElementById('apiKey').value = savedApiKey;
-            
-            // Add smooth scrolling
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
+
+        // ===== EXPORT DATA =====
+        async function exportData() {
+            try {
+                const result = await Swal.fire({
+                    title: 'Export Data',
+                    text: 'What data would you like to export?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3b82f6',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Export',
+                    input: 'select',
+                    inputOptions: {
+                        'users': 'Users',
+                        'games': 'Games',
+                        'logs': 'Logs'
+                    },
+                    inputPlaceholder: 'Select data type',
+                    inputValidator: (value) => {
+                        if (!value) {
+                            return 'You need to select a data type';
+                        }
+                    }
                 });
+
+                if (result.isConfirmed) {
+                    const dataType = result.value;
+                    let data, filename;
+
+                    switch(dataType) {
+                        case 'users':
+                            data = await API.call('/admin/list-users');
+                            filename = 'wisehub_users.json';
+                            break;
+                        case 'games':
+                            data = await API.call('/admin/list-games');
+                            filename = 'wisehub_games.json';
+                            break;
+                        case 'logs':
+                            data = await API.call('/admin/logs');
+                            filename = 'wisehub_logs.json';
+                            break;
+                    }
+
+                    // Create and download file
+                    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+
+                    showNotification(`${dataType.charAt(0).toUpperCase() + dataType.slice(1)} data exported successfully`, 'success');
+                }
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        }
+
+        // ===== AUTO-REFRESH =====
+        function startAutoRefresh() {
+            if (window.refreshInterval) {
+                clearInterval(window.refreshInterval);
+            }
+            
+            window.refreshInterval = setInterval(async () => {
+                if (document.getElementById('dashboard').style.display !== 'none') {
+                    await loadStats();
+                    
+                    // Refresh active tab data
+                    const activeTab = document.querySelector('.tab-content.active');
+                    if (activeTab && activeTab.id === 'tab-users') {
+                        await loadUsers();
+                    } else if (activeTab && activeTab.id === 'tab-games') {
+                        await loadGames();
+                    }
+                }
+            }, CONFIG.REFRESH_INTERVAL);
+        }
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for saved session
+            const savedUrl = sessionStorage.getItem('api_url');
+            const savedKey = sessionStorage.getItem('api_key_hash');
+            
+            if (savedUrl && savedKey) {
+                try {
+                    CONFIG.API_URL = savedUrl;
+                    CONFIG.API_KEY = atob(savedKey); // Decode
+                    
+                    document.getElementById('apiUrl').value = savedUrl;
+                    document.getElementById('apiKey').value = CONFIG.API_KEY;
+                    
+                    // Auto-login if session is valid
+                    login();
+                } catch (e) {
+                    console.error('Invalid session data:', e);
+                    sessionStorage.clear();
+                }
+            }
+            
+            // Add event listeners for input validation
+            document.getElementById('apiUrl').addEventListener('input', function() {
+                this.setCustomValidity('');
+                if (this.value && !Security.isValidUrl(this.value)) {
+                    this.setCustomValidity('Please enter a valid URL');
+                }
+            });
+            
+            // Save original button text
+            document.querySelectorAll('button').forEach(btn => {
+                btn.setAttribute('data-original-text', btn.innerHTML);
             });
         });
-        
-        // Save API credentials on successful login
-        const originalLogin = login;
-        login = function() {
-            originalLogin().then(() => {
-                localStorage.setItem('apiUrl', API_URL);
-                localStorage.setItem('apiKey', API_KEY);
-            }).catch(err => {
-                console.error(err);
-            });
-        };
+
+        // Track user activity
+        document.addEventListener('click', () => {
+            state.lastActivity = Date.now();
+        });
+
+        document.addEventListener('keypress', () => {
+            state.lastActivity = Date.now();
+        });
     </script>
 </body>
-
 </html>
