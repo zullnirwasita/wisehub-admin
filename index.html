@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WiseHub Admin Panel - Unified Manager</title>
+    <title>WiseHub Admin - Simple Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         * {
             margin: 0;
@@ -14,14 +15,10 @@
         
         :root {
             --primary: #3b82f6;
-            --primary-dark: #2563eb;
-            --secondary: #8b5cf6;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
             --dark: #0f172a;
-            --dark-light: #1e293b;
-            --dark-lighter: #334155;
             --text: #f1f5f9;
             --text-muted: #94a3b8;
         }
@@ -31,7 +28,6 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             color: var(--text);
             min-height: 100vh;
-            overflow-x: hidden;
         }
         
         body::before {
@@ -41,8 +37,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background:
-                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+            background: radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
                 radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%);
             animation: bgMove 20s ease infinite;
             pointer-events: none;
@@ -90,10 +85,9 @@
             text-align: center;
             font-size: 2.5em;
             margin-bottom: 10px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         
         .login-section p {
@@ -143,27 +137,9 @@
         
         .header h1 {
             font-size: 2em;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .logout-btn {
-            padding: 12px 24px;
-            background: linear-gradient(135deg, var(--danger), #dc2626);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
-        }
-        
-        .logout-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
         }
         
         .stats {
@@ -188,7 +164,7 @@
             left: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            background: linear-gradient(180deg, var(--primary), #8b5cf6);
         }
         
         @keyframes slideIn {
@@ -230,23 +206,9 @@
         .stat-card .value {
             font-size: 2.5em;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: countUp 1s ease;
-        }
-        
-        @keyframes countUp {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
         
         .stat-card .icon {
@@ -266,7 +228,6 @@
             background: rgba(15, 23, 42, 0.5);
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         
         .tab {
@@ -290,7 +251,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
             transition: left 0.3s ease;
             z-index: -1;
         }
@@ -364,7 +325,7 @@
         
         button {
             padding: 14px 28px;
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, var(--primary), #2563eb);
             border: none;
             border-radius: 12px;
             color: white;
@@ -372,36 +333,12 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
-        }
-        
-        button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        button:hover::before {
-            width: 300px;
-            height: 300px;
         }
         
         button:hover {
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-        }
-        
-        button:active {
-            transform: translateY(0);
         }
         
         button:disabled {
@@ -411,12 +348,8 @@
         }
         
         .btn-secondary {
-            background: linear-gradient(135deg, var(--dark-lighter), #475569);
-            box-shadow: 0 4px 15px rgba(71, 85, 105, 0.3);
-        }
-        
-        .btn-secondary:hover {
-            box-shadow: 0 6px 20px rgba(71, 85, 105, 0.4);
+            background: linear-gradient(135deg, #6b7280, #4b5563);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
         }
         
         .btn-danger {
@@ -424,22 +357,20 @@
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
         }
         
-        .btn-danger:hover {
-            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
-        }
-        
         .btn-success {
             background: linear-gradient(135deg, var(--success), #059669);
             box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
         }
         
-        .btn-success:hover {
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-        }
-        
         .btn-small {
             padding: 8px 16px;
             font-size: 0.85em;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
         }
         
         .table-container {
@@ -502,7 +433,7 @@
         }
         
         .badge-vip {
-            background: linear-gradient(135deg, var(--secondary), #7c3aed);
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
             color: white;
         }
         
@@ -584,54 +515,26 @@
             font-size: 0.9em;
         }
         
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-        
         .action-buttons {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
         
-        .kill-switch {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+        .time-info {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-top: 5px;
         }
         
-        .kill-switch-toggle {
-            width: 60px;
-            height: 30px;
-            background: var(--danger);
-            border-radius: 15px;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .kill-switch-toggle.active {
-            background: var(--success);
-        }
-        
-        .kill-switch-toggle::before {
-            content: '';
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 50%;
-            top: 3px;
-            left: 3px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-        
-        .kill-switch-toggle.active::before {
-            left: 33px;
+        .update-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 6px;
+            font-size: 0.75em;
+            color: #93c5fd;
+            margin-left: 8px;
         }
         
         @media (max-width: 768px) {
@@ -643,46 +546,18 @@
                 flex-direction: column;
                 gap: 15px;
             }
-            
-            .tabs {
-                justify-content: center;
-            }
-            
-            .tab {
-                flex: 1;
-                min-width: 120px;
-            }
-        }
-        
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.5);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 5px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
         }
     </style>
-    <script src="js/crypto-utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
 <body>
     <!-- Login Section -->
     <div class="login-section glass" id="loginSection">
         <h1>🛡️ WiseHub</h1>
-        <p>Admin Control Panel - Unified Manager</p>
+        <p>Simple Admin Panel</p>
         <div class="form-group">
             <label>API URL</label>
-            <input type="text" id="apiUrl" placeholder="https://your-api.workers.dev" value="">
+            <input type="text" id="apiUrl" placeholder="https://your-worker.workers.dev" value="">
         </div>
         <div class="form-group">
             <label>API Key</label>
@@ -696,7 +571,7 @@
     <div class="container dashboard" id="dashboard">
         <div class="header glass">
             <h1>🛡️ WiseHub Control</h1>
-            <button class="logout-btn" onclick="logout()">Logout</button>
+            <button class="btn-danger" onclick="logout()">Logout</button>
         </div>
         
         <!-- Stats -->
@@ -727,10 +602,10 @@
         <div class="tabs">
             <button class="tab active" onclick="switchTab('users')">👥 Users</button>
             <button class="tab" onclick="switchTab('add')">➕ Add User</button>
-            <button class="tab" onclick="switchTab('games')">🎮 Games Manager</button>
-            <button class="tab" onclick="switchTab('locker')">🔐 Locker</button>
+            <button class="tab" onclick="switchTab('games')">🎮 Games</button>
             <button class="tab" onclick="switchTab('logs')">📊 Logs</button>
         </div>
+        
         <!-- Tab: Users -->
         <div class="tab-content glass active" id="tab-users">
             <h2>VIP Users Management</h2>
@@ -775,184 +650,70 @@
             <button onclick="addUser()" class="btn-success">➕ Add User</button>
             <div id="addResult"></div>
         </div>
-        <!-- Tab: Unified Game Manager -->
+        
+        <!-- Tab: Games -->
         <div class="tab-content glass" id="tab-games">
-            <h2>🎮 Unified Game Manager</h2>
+            <h2>🎮 Game Scripts Management</h2>
             <p style="color: var(--text-muted); margin-bottom: 20px;">
-                Create games, upload scripts, obfuscate with MoonVeil, and backup to Locker - all in one place
+                Manage your game scripts with automatic update tracking
             </p>
             
-            <!-- Create New Game -->
+            <!-- Add New Game -->
             <div style="background: rgba(59, 130, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary);">
-                <h3 style="color: var(--primary); margin-bottom: 15px;">➕ Create New Game</h3>
+                <h3 style="color: var(--primary); margin-bottom: 15px;">➕ Add New Game</h3>
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Place ID</label>
-                        <input type="text" id="newGamePlaceId" placeholder="606849621">
+                        <input type="text" id="newPlaceId" placeholder="606849621">
                     </div>
                     <div class="form-group">
                         <label>Game Name</label>
                         <input type="text" id="newGameName" placeholder="Jailbreak">
                     </div>
                 </div>
-                <button onclick="createNewGame()" class="btn-success">➕ Create Game Entry</button>
-                <div id="createGameResult"></div>
+                <div class="form-group">
+                    <label>Script URL (Raw Link)</label>
+                    <input type="text" id="newScriptUrl" placeholder="https://raw.githubusercontent.com/... or https://pastefy.app/...">
+                    <small style="color: var(--text-muted); display: block; margin-top: 5px;">
+                        💡 Use raw links from GitHub, Pastefy, Pastebin, or any direct script URL
+                    </small>
+                </div>
+                <button onclick="addGame()" class="btn-success">➕ Add Game</button>
+                <div id="addGameResult"></div>
             </div>
             
-            <!-- Upload & Process Script -->
-            <div style="background: rgba(139, 92, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--secondary);">
-                <h3 style="color: var(--secondary); margin-bottom: 15px;">🚀 Upload & Process Script</h3>
-                
-                <div class="form-group">
-                    <label>Select Game</label>
-                    <select id="uploadGameSelect" onchange="updateObfuscationInfo()">
-                        <option value="">-- Select a game to upload script --</option>
-                    </select>
-                </div>
-                
+            <!-- Update Script -->
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--success);">
+                <h3 style="color: var(--success); margin-bottom: 15px;">🔄 Update Existing Script</h3>
                 <div class="grid-2">
                     <div class="form-group">
-                        <label>Upload Lua Script</label>
-                        <input type="file" id="gameScriptFile" accept=".lua,.txt" onchange="handleScriptFileSelect(event)" style="cursor: pointer; background: rgba(15, 23, 42, 0.9);">
-                        <div id="scriptFileSelected" style="display: none; margin-top: 8px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: #6ee7b7; font-size: 0.9em;"></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Obfuscation Profile 🌙</label>
-                        <select id="obfuscationProfile" onchange="updateObfuscationInfo()">
-                            <option value="none">🚫 None - No obfuscation</option>
-                            <option value="light">⚡ Light - Basic protection</option>
-                            <option value="medium" selected>🛡️ Medium - Balanced (Recommended)</option>
-                            <option value="aggressive">🔥 Aggressive - Maximum security</option>
+                        <label>Select Game</label>
+                        <select id="updateGameSelect">
+                            <option value="">-- Select a game --</option>
                         </select>
                     </div>
-                </div>
-                
-                <div id="obfuscationInfo" style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9em; color: var(--text-muted);"></div>
-                
-                <div class="form-group">
-                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(15, 23, 42, 0.5); padding: 12px; border-radius: 10px;">
-                        <input type="checkbox" id="saveToLocker" checked style="width: auto; cursor: pointer;">
-                        <span>💾 Backup original script to Locker (encrypted storage)</span>
-                    </label>
-                </div>
-                
-                <button onclick="processGameScript()" id="processScriptBtn" class="btn-success">
-                    🚀 Process Script (Upload + Obfuscate + Backup)
-                </button>
-                
-                <div id="processScriptProgress" style="display: none; margin-top: 20px;">
-                    <div class="alert alert-info">
-                        <div class="loading">
-                            <div class="spinner"></div>
-                            <p id="processScriptStatus">⏳ Processing...</p>
-                        </div>
+                    <div class="form-group">
+                        <label>New Script URL</label>
+                        <input type="text" id="updateScriptUrl" placeholder="https://raw.githubusercontent.com/...">
                     </div>
                 </div>
-                
-                <div id="processScriptResult"></div>
+                <button onclick="updateScript()" class="btn-success">🔄 Update Script</button>
+                <div id="updateScriptResult"></div>
             </div>
             
             <!-- Games List -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="color: var(--primary);">📊 Existing Games</h3>
-                <button onclick="loadUnifiedGames()" class="btn-secondary">🔄 Refresh</button>
+                <h3 style="color: var(--primary);">📊 All Games</h3>
+                <button onclick="loadGames()" class="btn-secondary">🔄 Refresh</button>
             </div>
             
-            <div class="table-container" id="unifiedGamesTable">
+            <div class="table-container" id="gamesTable">
                 <p style="text-align: center; color: var(--text-muted); padding: 40px;">
                     Click refresh to load games
                 </p>
             </div>
         </div>
-        <!-- Tab: Locker -->
-        <div class="tab-content glass" id="tab-locker">
-            <h2>🔐 Script Locker System</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">
-                Encrypted backup storage with client-side encryption. Your scripts are encrypted before upload using AES-256-GCM + RSA-2048.
-            </p>
-            
-            <!-- Status -->
-            <div id="lockerStatus" class="alert alert-info">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>Checking locker status...</p>
-                </div>
-            </div>
-            
-            <!-- Setup Section -->
-            <div id="lockerSetup" style="display: none;">
-                <div class="alert alert-error">
-                    ⚠️ <strong>Locker Not Configured</strong><br>
-                    You need to generate your recovery phrase to enable encrypted backup storage.
-                </div>
-                <button onclick="setupLocker()" class="btn-success">🔑 Setup Locker Now</button>
-                <div style="margin-top: 20px; padding: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 15px; border-left: 4px solid var(--secondary);">
-                    <h4 style="color: var(--secondary); margin-bottom: 10px;">💡 What is Locker?</h4>
-                    <ul style="color: var(--text-muted); margin-left: 20px; line-height: 1.8;">
-                        <li>Encrypted backup storage for your game scripts</li>
-                        <li>Client-side encryption - server never sees your plaintext scripts</li>
-                        <li>Recovery via 12-word BIP39 passphrase</li>
-                        <li>Military-grade AES-256-GCM + RSA-2048 encryption</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <!-- Main Interface -->
-            <div id="lockerInterface" style="display: none;">
-                <div class="alert alert-success">
-                    ✅ <strong>Locker Active</strong> - Your scripts are protected with client-side encryption.
-                </div>
-                
-                <!-- Upload Section -->
-                <div style="background: rgba(15, 23, 42, 0.5); padding: 30px; border-radius: 15px; margin-top: 20px; border: 1px solid rgba(255, 255, 255, 0.05);">
-                    <h3 style="color: var(--primary); margin-bottom: 20px;">📤 Upload Script to Locker</h3>
-                    <p style="color: var(--text-muted); margin-bottom: 20px;">
-                        Select a game to encrypt and backup its script. The script will be downloaded, encrypted in your browser, and uploaded encrypted.
-                    </p>
-                    
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label>Select Game</label>
-                            <select id="lockerGameSelect">
-                                <option value="">-- Select a game --</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>&nbsp;</label>
-                            <button onclick="uploadToLocker()" class="btn-success">🔒 Encrypt & Upload</button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Locked Scripts -->
-                <div style="margin-top: 40px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h3 style="color: var(--primary);">📦 Locked Scripts</h3>
-                        <button onclick="loadLockedScripts()" class="btn-secondary">🔄 Refresh</button>
-                    </div>
-                    <div id="lockedScriptsTable">
-                        <p style="color: var(--text-muted); text-align: center; padding: 40px;">
-                            Click refresh to view your encrypted scripts.
-                        </p>
-                    </div>
-                </div>
-                
-                <!-- Recovery Info -->
-                <div style="background: rgba(245, 158, 11, 0.1); padding: 20px; border-radius: 15px; margin-top: 30px; border-left: 4px solid var(--warning);">
-                    <h4 style="color: var(--warning); margin-bottom: 10px;">⚠️ Important Security Information</h4>
-                    <ul style="color: var(--text-muted); margin-left: 20px; line-height: 1.8;">
-                        <li><strong>Your 12-word recovery phrase is the ONLY way to decrypt scripts</strong></li>
-                        <li>The server NEVER sees your recovery phrase or decrypted scripts</li>
-                        <li>If you lose your recovery phrase, encrypted scripts CANNOT be recovered</li>
-                        <li>Keep your recovery phrase safe - write it down or store it securely offline</li>
-                        <li>Never share your recovery phrase with anyone</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div id="lockerActionResult"></div>
-        </div>
+        
         <!-- Tab: Logs -->
         <div class="tab-content glass" id="tab-logs">
             <h2>Login Activity Logs</h2>
@@ -972,27 +733,16 @@
             <div class="table-container" id="logsTable"></div>
         </div>
     </div>
+    
     <script>
         // ===== CONFIGURATION =====
-        // IMPORTANT: Change these values!
-        let API_URL = 'https://zullstore21.workers.dev'; // Replace with your Worker URL
-        let API_KEY = 'admin'; // Replace with your API key
+        let API_URL = 'https://your-worker.workers.dev'; // CHANGE THIS!
+        let API_KEY = 'admin'; // CHANGE THIS!
         
         let currentGames = [];
-        const ADMIN_USER_ID = 'admin';
-        let lockerConfig = null;
         
-        // ===== OBFUSCATION INFO =====
-        const OBFUSCATION_INFO = {
-            none: '<strong>No Obfuscation</strong><br>Script remains in original form. Fastest performance, no protection.',
-            light: '<strong>Light Protection</strong><br>✅ String encryption<br>📊 Performance: ~5% overhead<br>🛡️ Protection: Basic<br>⏱️ Process time: ~2-3 seconds',
-            medium: '<strong>Medium Protection (Recommended)</strong><br>✅ Virtualization<br>✅ String encryption<br>✅ Control flow obfuscation<br>📊 Performance: ~15% overhead<br>🛡️ Protection: Good<br>⏱️ Process time: ~4-6 seconds',
-            aggressive: '<strong>Maximum Protection</strong><br>✅ Full virtualization<br>✅ String encryption<br>✅ Control flow obfuscation<br>✅ Anti-tamper protection<br>✅ Constant encryption<br>📊 Performance: ~30% overhead<br>🛡️ Protection: Maximum<br>⏱️ Process time: ~8-12 seconds'
-        };
+        // ===== UTILITIES =====
         
-        // ===== UTILITY FUNCTIONS =====
-        
-        // Generate Random Key
         function generateRandomKey() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let key = 'WISE-';
@@ -1003,25 +753,15 @@
             document.getElementById('newKey').value = key;
         }
         
-        // API Call Helper - UPDATED to support FormData
-        async function apiCall(endpoint, method = 'GET', body = null, isFormData = false) {
+        async function apiCall(endpoint, method = 'GET', body = null) {
             const options = {
                 method,
                 headers: {
+                    'Content-Type': 'application/json',
                     'x-api-key': API_KEY
                 }
             };
-            
-            if (body) {
-                if (isFormData) {
-                    // For file upload - don't set Content-Type, browser will set it automatically
-                    options.body = body;
-                } else {
-                    // For JSON
-                    options.headers['Content-Type'] = 'application/json';
-                    options.body = JSON.stringify(body);
-                }
-            }
+            if (body) options.body = JSON.stringify(body);
             
             const response = await fetch(API_URL + endpoint, options);
             const data = await response.json();
@@ -1032,7 +772,6 @@
             return data;
         }
         
-        // Show Alert
         function showAlert(id, message, type = 'success') {
             const elem = document.getElementById(id);
             if (elem) {
@@ -1043,9 +782,23 @@
             }
         }
         
+        function formatTimeAgo(timestamp) {
+            const now = new Date();
+            const past = new Date(timestamp);
+            const diffMs = now - past;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMins / 60);
+            const diffDays = Math.floor(diffHours / 24);
+            
+            if (diffMins < 1) return 'Just now';
+            if (diffMins < 60) return `${diffMins} min ago`;
+            if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            return past.toLocaleDateString();
+        }
+        
         // ===== AUTHENTICATION =====
         
-        // Login
         async function login() {
             API_URL = document.getElementById('apiUrl').value.trim();
             API_KEY = document.getElementById('apiKey').value.trim();
@@ -1064,14 +817,12 @@
                 
                 loadStats();
                 loadUsers();
-                loadUnifiedGames();
-                updateObfuscationInfo();
+                loadGames();
             } catch (error) {
                 showAlert('loginError', '❌ Login failed: ' + error.message, 'error');
             }
         }
         
-        // Logout
         function logout() {
             if (!confirm('Are you sure you want to logout?')) return;
             API_URL = '';
@@ -1082,7 +833,7 @@
             document.getElementById('apiKey').value = '';
         }
         
-        // ===== DASHBOARD STATS =====
+        // ===== STATS =====
         
         async function loadStats() {
             try {
@@ -1095,9 +846,9 @@
                 console.error('Stats error:', error);
             }
         }
+        
         // ===== USER MANAGEMENT =====
         
-        // Load Users
         async function loadUsers() {
             try {
                 const users = await apiCall('/admin/list-users');
@@ -1141,7 +892,6 @@
             }
         }
         
-        // Add User
         async function addUser() {
             const userId = document.getElementById('newUserId').value.trim();
             const username = document.getElementById('newUsername').value.trim();
@@ -1176,352 +926,217 @@
             }
         }
         
-        // Remove User
         async function removeUser(userId) {
             if (!confirm(`Delete user ${userId}? This cannot be undone!`)) return;
             
             try {
                 await apiCall('/admin/remove-user', 'POST', { userId });
-                showAlert('usersTable', `✅ User ${userId} deleted!`, 'success');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: `User ${userId} has been removed`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 loadUsers();
                 loadStats();
             } catch (error) {
-                showAlert('usersTable', `❌ Error: ${error.message}`, 'error');
+                Swal.fire('Error', error.message, 'error');
             }
         }
         
-        // Reset HWID
         async function resetHWID(userId) {
             if (!confirm(`Reset HWID for user ${userId}?`)) return;
             
             try {
                 await apiCall('/admin/reset-hwid', 'POST', { userId });
-                showAlert('usersTable', `✅ HWID reset for ${userId}!`, 'success');
-                loadUsers();
-            } catch (error) {
-                showAlert('usersTable', `❌ Error: ${error.message}`, 'error');
-            }
-        }
-        // ===== UNIFIED GAME MANAGER =====
-        
-        // Create New Game
-        async function createNewGame() {
-            const placeId = document.getElementById('newGamePlaceId').value.trim();
-            const gameName = document.getElementById('newGameName').value.trim();
-            
-            if (!placeId || !gameName) {
-                showAlert('createGameResult', '⚠️ Please fill all fields', 'error');
-                return;
-            }
-            
-            try {
-                const result = await apiCall('/admin/game/create', 'POST', { placeId, gameName });
-                showAlert('createGameResult', result.message + '<br><small>Now you can upload a script for this game.</small>', 'success');
-                
-                document.getElementById('newGamePlaceId').value = '';
-                document.getElementById('newGameName').value = '';
-                
-                loadUnifiedGames();
-                populateGameSelectForUpload();
-                loadStats();
-                
-            } catch (error) {
-                showAlert('createGameResult', '❌ Error: ' + error.message, 'error');
-            }
-        }
-        
-        // Handle Script File Select
-        function handleScriptFileSelect(event) {
-            const file = event.target.files[0];
-            const display = document.getElementById('scriptFileSelected');
-            
-            if (file) {
-                // Validate file size (max 5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('❌ File too large! Maximum 5MB allowed.');
-                    event.target.value = '';
-                    display.style.display = 'none';
-                    return;
-                }
-                
-                // Validate extension
-                if (!file.name.endsWith('.lua') && !file.name.endsWith('.txt')) {
-                    alert('❌ Invalid file type! Only .lua or .txt files allowed.');
-                    event.target.value = '';
-                    display.style.display = 'none';
-                    return;
-                }
-                
-                display.style.display = 'block';
-                display.innerHTML = `✅ Selected: <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB)`;
-            } else {
-                display.style.display = 'none';
-            }
-        }
-        
-        // Update Obfuscation Info
-        function updateObfuscationInfo() {
-            const profile = document.getElementById('obfuscationProfile').value;
-            document.getElementById('obfuscationInfo').innerHTML = OBFUSCATION_INFO[profile];
-        }
-        
-        // Populate Game Select for Upload
-        function populateGameSelectForUpload() {
-            const select = document.getElementById('uploadGameSelect');
-            select.innerHTML = '<option value="">-- Select a game to upload script --</option>';
-            
-            if (currentGames && currentGames.length > 0) {
-                currentGames.forEach(game => {
-                    const option = document.createElement('option');
-                    option.value = game.place_id;
-                    option.textContent = `${game.game_name} (${game.place_id}) - ${game.version || 'No script yet'}`;
-                    select.appendChild(option);
-                });
-            }
-        }
-        
-        // Process Game Script (Main Function)
-        async function processGameScript() {
-            const placeId = document.getElementById('uploadGameSelect').value;
-            const profile = document.getElementById('obfuscationProfile').value;
-            const saveToLocker = document.getElementById('saveToLocker').checked;
-            const scriptFile = document.getElementById('gameScriptFile').files[0];
-            
-            if (!placeId) {
-                showAlert('processScriptResult', '⚠️ Please select a game', 'error');
-                return;
-            }
-            
-            if (!scriptFile) {
-                showAlert('processScriptResult', '⚠️ Please select a script file', 'error');
-                return;
-            }
-            
-            const formData = new FormData();
-            formData.append('placeId', placeId);
-            formData.append('profile', profile);
-            formData.append('saveToLocker', saveToLocker);
-            formData.append('userId', ADMIN_USER_ID);
-            formData.append('script', scriptFile);
-            
-            try {
-                document.getElementById('processScriptProgress').style.display = 'block';
-                document.getElementById('processScriptResult').innerHTML = '';
-                document.getElementById('processScriptBtn').disabled = true;
-                
-                // Status updates
-                const statusMessages = [
-                    '📤 Uploading script...',
-                    profile !== 'none' ? '🌙 Obfuscating with MoonVeil AI...' : '⏭️ Skipping obfuscation...',
-                    saveToLocker ? '🔐 Backing up to encrypted Locker...' : '⏭️ Skipping backup...',
-                    '💾 Updating database...',
-                    '✅ Finalizing...'
-                ];
-                
-                let step = 0;
-                const interval = setInterval(() => {
-                    if (step < statusMessages.length) {
-                        document.getElementById('processScriptStatus').textContent = statusMessages[step];
-                        step++;
-                    }
-                }, profile === 'aggressive' ? 1500 : profile === 'medium' ? 1000 : 600);
-                
-                const result = await apiCall('/admin/game/process-script', 'POST', formData, true);
-                
-                clearInterval(interval);
-                document.getElementById('processScriptProgress').style.display = 'none';
-                document.getElementById('processScriptBtn').disabled = false;
-                
-                const data = result.data;
-                
-                // Show result with stats
-                let resultHTML = `<div class="alert alert-success">${result.message}</div>`;
-                
-                resultHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">';
-                
-                resultHTML += `
-                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #0ea5e9;">
-                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">GAME</h4>
-                        <div style="color: #0ea5e9; font-size: 1.3em; font-weight: bold;">${data.gameName}</div>
-                    </div>
-                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #8b5cf6;">
-                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">VERSION</h4>
-                        <div style="color: #8b5cf6; font-size: 1.3em; font-weight: bold;">${data.version}</div>
-                    </div>
-                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #10b981;">
-                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">PROFILE</h4>
-                        <div style="color: #10b981; font-size: 1.3em; font-weight: bold;">${data.profile}</div>
-                    </div>
-                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b;">
-                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">ORIGINAL SIZE</h4>
-                        <div style="color: #f59e0b; font-size: 1.3em; font-weight: bold;">${(data.originalSize / 1024).toFixed(2)} KB</div>
-                    </div>
-                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b;">
-                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">PROCESSED SIZE</h4>
-                        <div style="color: #f59e0b; font-size: 1.3em; font-weight: bold;">${(data.processedSize / 1024).toFixed(2)} KB</div>
-                    </div>
-                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #ef4444;">
-                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">SIZE RATIO</h4>
-                        <div style="color: #ef4444; font-size: 1.3em; font-weight: bold;">${data.compressionRatio}</div>
-                    </div>
-                `;
-                
-                if (data.lockerBackupId) {
-                    resultHTML += `
-                        <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #0ea5e9;">
-                            <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">LOCKER BACKUP</h4>
-                            <div style="color: #0ea5e9; font-size: 1.3em; font-weight: bold;">✅ ID: ${data.lockerBackupId}</div>
-                        </div>
-                    `;
-                }
-                
-                resultHTML += '</div>';
-                
-                // Download buttons
-                resultHTML += '<div style="display: flex; gap: 10px; margin-top: 20px;">';
-                resultHTML += `<button onclick="downloadProcessedScript('${data.placeId}', '${data.version}')" class="btn-success">📥 Download Processed Script</button>`;
-                resultHTML += `<button onclick="copyProcessedScript('${data.placeId}', '${data.version}')" class="btn-secondary">📋 Copy to Clipboard</button>`;
-                resultHTML += '</div>';
-                
-                // Store in sessionStorage
-                sessionStorage.setItem(`processed_script_${data.placeId}_${data.version}`, data.scriptContent);
-                
-                document.getElementById('processScriptResult').innerHTML = resultHTML;
-                
-                // Reset form
-                document.getElementById('gameScriptFile').value = '';
-                document.getElementById('scriptFileSelected').style.display = 'none';
-                
-                loadUnifiedGames();
-                loadStats();
-                
-            } catch (error) {
-                clearInterval(interval);
-                document.getElementById('processScriptProgress').style.display = 'none';
-                document.getElementById('processScriptBtn').disabled = false;
-                showAlert('processScriptResult', '❌ Error: ' + error.message, 'error');
-            }
-        }
-        
-        // Download Processed Script
-        function downloadProcessedScript(placeId, version) {
-            const scriptContent = sessionStorage.getItem(`processed_script_${placeId}_${version}`);
-            
-            if (!scriptContent) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Script Not Found',
-                    text: 'Script content expired. Please process again.'
-                });
-                return;
-            }
-            
-            const blob = new Blob([scriptContent], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `script_${placeId}_${version}.lua`;
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-            
-            Swal.fire({
-                icon: 'success',
-                title: 'Downloaded!',
-                text: 'Script file downloaded successfully',
-                timer: 2000,
-                showConfirmButton: false
-            });
-        }
-        
-        // Copy Processed Script
-        function copyProcessedScript(placeId, version) {
-            const scriptContent = sessionStorage.getItem(`processed_script_${placeId}_${version}`);
-            
-            if (!scriptContent) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Script Not Found',
-                    text: 'Script content expired. Please process again.'
-                });
-                return;
-            }
-            
-            navigator.clipboard.writeText(scriptContent).then(() => {
                 Swal.fire({
                     icon: 'success',
-                    title: 'Copied!',
-                    text: 'Script copied to clipboard',
+                    title: 'Reset!',
+                    text: `HWID reset for ${userId}`,
                     timer: 2000,
                     showConfirmButton: false
                 });
-            }).catch(err => {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Copy Failed',
-                    text: err.message
-                });
-            });
+                loadUsers();
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
         }
         
-        // Load Unified Games
-        async function loadUnifiedGames() {
+        // ===== GAME MANAGEMENT =====
+        
+        async function loadGames() {
             try {
                 const games = await apiCall('/admin/list-games');
                 currentGames = games;
                 
-                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Profile</th><th>Status</th><th>Backup</th><th>Actions</th></tr></thead><tbody>';
+                // Populate update select
+                const select = document.getElementById('updateGameSelect');
+                select.innerHTML = '<option value="">-- Select a game --</option>';
+                if (games && games.length > 0) {
+                    games.forEach(game => {
+                        const option = document.createElement('option');
+                        option.value = game.place_id;
+                        option.textContent = `${game.game_name} (${game.place_id})`;
+                        select.appendChild(option);
+                    });
+                }
+                
+                // Build table
+                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Updates</th><th>Last Updated</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
                 
                 if (Array.isArray(games) && games.length > 0) {
                     games.forEach(game => {
                         const statusClass = game.is_active ? 'badge-active' : 'badge-inactive';
                         const statusText = game.is_active ? 'Active' : 'Disabled';
-                        
-                        const profileBadge = game.is_obfuscated ?
-                            `<span class="badge badge-vip">🔒 ${game.obfuscation_profile}</span>` :
-                            `<span class="badge badge-basic">📝 none</span>`;
-                        
-                        const backupBadge = game.locker_backup_id ?
-                            `<span class="badge badge-active">💾 Yes</span>` :
-                            `<span class="badge badge-inactive">❌ No</span>`;
+                        const updateCount = game.update_count || 0;
+                        const lastUpdated = game.last_updated ? formatTimeAgo(game.last_updated) : 'Never';
                         
                         html += `
                             <tr>
-<td><strong>${game.game_name}</strong></td>
+                                <td><strong>${game.game_name}</strong></td>
                                 <td><code>${game.place_id}</code></td>
-                                <td>${game.version || 'pending'}</td>
-                                <td>${profileBadge}</td>
+                                <td><code>${game.version || 'v0'}</code></td>
+                                <td><span class="update-badge">${updateCount} update${updateCount !== 1 ? 's' : ''}</span></td>
+                                <td>
+                                    <div>${lastUpdated}</div>
+                                    <div class="time-info">${new Date(game.last_updated || game.created_at).toLocaleString()}</div>
+                                </td>
                                 <td><span class="badge ${statusClass}">${statusText}</span></td>
-                                <td>${backupBadge}</td>
                                 <td>
                                     <div class="action-buttons">
+                                        <button class="btn-small btn-secondary" onclick="viewHistory('${game.place_id}', '${game.game_name}')">📜 History</button>
                                         <button class="btn-small ${game.is_active ? 'btn-danger' : 'btn-success'}" 
                                             onclick="toggleGame('${game.place_id}', ${!game.is_active})">
                                             ${game.is_active ? '🔴 Disable' : '🟢 Enable'}
                                         </button>
-                                        <button class="btn-small btn-danger" onclick="deleteUnifiedGame('${game.place_id}', '${game.game_name}')">🗑️ Delete</button>
+                                        <button class="btn-small btn-danger" onclick="deleteGame('${game.place_id}', '${game.game_name}')">🗑️ Delete</button>
                                     </div>
                                 </td>
                             </tr>
                         `;
                     });
                 } else {
-                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No games found. Create one above!</td></tr>';
+                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No games found. Add one above!</td></tr>';
                 }
                 
                 html += '</tbody></table>';
-                document.getElementById('unifiedGamesTable').innerHTML = html;
-                
-                populateGameSelectForUpload();
-                populateLockerGameSelect();
+                document.getElementById('gamesTable').innerHTML = html;
                 
             } catch (error) {
-                document.getElementById('unifiedGamesTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+                document.getElementById('gamesTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
             }
         }
         
-        // Toggle Game Active/Inactive
+        async function addGame() {
+            const placeId = document.getElementById('newPlaceId').value.trim();
+            const gameName = document.getElementById('newGameName').value.trim();
+            const scriptUrl = document.getElementById('newScriptUrl').value.trim();
+            
+            if (!placeId || !gameName || !scriptUrl) {
+                showAlert('addGameResult', '⚠️ All fields are required!', 'error');
+                return;
+            }
+            
+            // Validate URL
+            try {
+                new URL(scriptUrl);
+            } catch (e) {
+                showAlert('addGameResult', '⚠️ Invalid URL format!', 'error');
+                return;
+            }
+            
+            try {
+                const result = await apiCall('/admin/add-game', 'POST', {
+                    placeId,
+                    gameName,
+                    scriptUrl
+                });
+                
+                showAlert('addGameResult', `✅ ${gameName} added successfully!`, 'success');
+                document.getElementById('newPlaceId').value = '';
+                document.getElementById('newGameName').value = '';
+                document.getElementById('newScriptUrl').value = '';
+                
+                loadGames();
+                loadStats();
+            } catch (error) {
+                showAlert('addGameResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function updateScript() {
+            const placeId = document.getElementById('updateGameSelect').value;
+            const scriptUrl = document.getElementById('updateScriptUrl').value.trim();
+            
+            if (!placeId) {
+                showAlert('updateScriptResult', '⚠️ Please select a game', 'error');
+                return;
+            }
+            
+            if (!scriptUrl) {
+                showAlert('updateScriptResult', '⚠️ Script URL is required!', 'error');
+                return;
+            }
+            
+            // Validate URL
+            try {
+                new URL(scriptUrl);
+            } catch (e) {
+                showAlert('updateScriptResult', '⚠️ Invalid URL format!', 'error');
+                return;
+            }
+            
+            try {
+                const result = await apiCall('/admin/update-script', 'POST', {
+                    placeId,
+                    scriptUrl
+                });
+                
+                showAlert('updateScriptResult', `✅ ${result.data.gameName} updated to ${result.data.version}!<br>Total updates: ${result.data.updateCount}`, 'success');
+                document.getElementById('updateScriptUrl').value = '';
+                
+                loadGames();
+            } catch (error) {
+                showAlert('updateScriptResult', `❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function viewHistory(placeId, gameName) {
+            try {
+                const result = await apiCall(`/admin/script-history?placeId=${placeId}`);
+                
+                if (!result.history || result.history.length === 0) {
+                    Swal.fire('No History', 'No update history found for this game', 'info');
+                    return;
+                }
+                
+                let historyHtml = '<table style="width: 100%; color: #f1f5f9;"><thead><tr style="background: rgba(59, 130, 246, 0.1);"><th style="padding: 10px;">Version</th><th style="padding: 10px;">Updated</th><th style="padding: 10px;">Script URL</th></tr></thead><tbody>';
+                
+                result.history.forEach(h => {
+                    const date = new Date(h.updated_at).toLocaleString();
+                    const shortUrl = h.script_url.length > 50 ? h.script_url.substring(0, 50) + '...' : h.script_url;
+                    historyHtml += `
+                        <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <td style="padding: 10px;"><code style="background: rgba(15, 23, 42, 0.8); padding: 4px 8px; border-radius: 6px;">${h.version}</code></td>
+                            <td style="padding: 10px;">${date}</td>
+                            <td style="padding: 10px;"><a href="${h.script_url}" target="_blank" style="color: #3b82f6;">${shortUrl}</a></td>
+                        </tr>
+                    `;
+                });
+                historyHtml += '</tbody></table>';
+                
+                Swal.fire({
+                    title: `📜 Update History: ${gameName}`,
+                    html: historyHtml,
+                    width: '800px',
+                    confirmButtonText: 'Close'
+                });
+            } catch (error) {
+                Swal.fire('Error', error.message, 'error');
+            }
+        }
+        
         async function toggleGame(placeId, isActive) {
             try {
                 await apiCall('/admin/toggle-game', 'POST', { placeId, isActive });
@@ -1532,22 +1147,17 @@
                     timer: 2000,
                     showConfirmButton: false
                 });
-                loadUnifiedGames();
+                loadGames();
                 loadStats();
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Toggle Failed',
-                    text: error.message
-                });
+                Swal.fire('Error', error.message, 'error');
             }
         }
         
-        // Delete Unified Game
-        async function deleteUnifiedGame(placeId, gameName) {
+        async function deleteGame(placeId, gameName) {
             const result = await Swal.fire({
                 title: 'Delete Game?',
-                html: `Are you sure you want to delete <strong>${gameName}</strong>?<br><br>⚠️ This will also delete:<br>• Script files<br>• Locker backups<br>• All associated data<br><br><strong>This cannot be undone!</strong>`,
+                html: `Are you sure you want to delete <strong>${gameName}</strong>?<br><br>⚠️ This will also delete:<br>• All update history<br>• Script data<br><br><strong>This cannot be undone!</strong>`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
@@ -1569,359 +1179,16 @@
                     showConfirmButton: false
                 });
                 
-                loadUnifiedGames();
+                loadGames();
                 loadStats();
                 
             } catch (error) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Delete Failed',
-                    text: error.message
-                });
-            }
-        }
-        // ===== LOCKER FUNCTIONS =====
-        
-        // Check Locker Status
-        async function checkLockerStatus() {
-            try {
-                document.getElementById('lockerStatus').innerHTML = `
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>Checking locker configuration...</p>
-                    </div>
-                `;
-                
-                const data = await apiCall(`/locker/data?userId=${ADMIN_USER_ID}`);
-                
-                if (data.is_configured) {
-                    document.getElementById('lockerStatus').style.display = 'none';
-                    document.getElementById('lockerSetup').style.display = 'none';
-                    document.getElementById('lockerInterface').style.display = 'block';
-                    lockerConfig = data;
-                    populateLockerGameSelect();
-                } else {
-                    document.getElementById('lockerStatus').style.display = 'none';
-                    document.getElementById('lockerSetup').style.display = 'block';
-                    document.getElementById('lockerInterface').style.display = 'none';
-                }
-            } catch (error) {
-                document.getElementById('lockerStatus').innerHTML = `
-                    <div class="alert alert-error">❌ Error loading locker: ${error.message}</div>
-                `;
+                Swal.fire('Error', error.message, 'error');
             }
         }
         
-        // Setup Locker
-        async function setupLocker() {
-            try {
-                const bip39Words = await CryptoUtils.generateBIP39Words(12);
-                
-                let wordsHtml = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">';
-                bip39Words.forEach((word, i) => {
-                    wordsHtml += `
-                        <div style="background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(59, 130, 246, 0.3);">
-                            <span style="color: #94a3b8; font-size: 0.9em;">${i + 1}.</span><br>
-                            <strong style="color: #0ea5e9; font-size: 1.2em;">${word}</strong>
-                        </div>
-                    `;
-                });
-                wordsHtml += '</div>';
-                
-                const result = await Swal.fire({
-                    title: '🔑 Your Recovery Phrase',
-                    width: '800px',
-                    html: `
-                        ${wordsHtml}
-                        <div style="background: rgba(245, 158, 11, 0.2); padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #f59e0b;">
-                            <p style="color: #fbbf24; margin: 0; line-height: 1.8;">
-                                <strong>⚠️ CRITICAL:</strong> Write these words down or take a photo NOW!<br>
-                                You'll need them to decrypt your scripts. If you lose them, your encrypted scripts are gone forever.
-                            </p>
-                        </div>
-                    `,
-                    showCancelButton: true,
-                    cancelButtonText: '🔄 Generate New Words',
-                    confirmButtonText: '✅ I Saved Them',
-                    allowOutsideClick: false,
-                    allowEscapeKey: false
-                });
-                
-                if (!result.isConfirmed) {
-                    return setupLocker();
-                }
-                
-                showAlert('lockerActionResult', '⏳ Generating encryption keys...', 'info');
-                
-                const wordlist = await CryptoUtils.loadWordlist();
-                const bip39Bytes = await CryptoUtils.bip39WordsToUint8Array(bip39Words, wordlist);
-                const masterKey = await CryptoUtils.deriveKey(bip39Bytes, 'WISEHUB_MASTER_SALT');
-                
-                const rsaKeys = await CryptoUtils.generateRSAKeyPair();
-                
-                const rsaPrivEnc = await CryptoUtils.encryptAESGCM(rsaKeys.privateKey, masterKey);
-                const rsaPrivEncBase64 = CryptoUtils.arrayBufferToBase64(rsaPrivEnc);
-                
-                await apiCall('/locker/associate_keys', 'POST', {
-                    userId: ADMIN_USER_ID,
-                    rsaPub: rsaKeys.publicKey,
-                    rsaPrivEnc: rsaPrivEncBase64
-                });
-                
-                showAlert('lockerActionResult', '✅ Locker configured successfully!', 'success');
-                
-                setTimeout(() => {
-                    checkLockerStatus();
-                }, 2000);
-                
-            } catch (error) {
-                showAlert('lockerActionResult', '❌ Setup failed: ' + error.message, 'error');
-            }
-        }
-        
-        // Populate Game Select for Locker
-        function populateLockerGameSelect() {
-            const select = document.getElementById('lockerGameSelect');
-            select.innerHTML = '<option value="">-- Select a game --</option>';
-            
-            if (currentGames && currentGames.length > 0) {
-                currentGames.forEach(game => {
-                    const option = document.createElement('option');
-                    option.value = game.place_id;
-                    option.textContent = `${game.game_name} (${game.place_id})`;
-                    option.dataset.scriptUrl = game.script_url;
-                    option.dataset.gameName = game.game_name;
-                    select.appendChild(option);
-                });
-            }
-        }
-        
-        // Prompt BIP39 Recovery Phrase
-        async function promptBIP39(title = '🔑 Enter Recovery Phrase') {
-            let inputsHtml = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0;">';
-            for (let i = 1; i <= 12; i++) {
-                inputsHtml += `
-                    <input type="text" id="bipWord${i}" class="swal2-input" 
-                           placeholder="Word ${i}" 
-                           style="width: 90%; padding: 12px; margin: 0; text-align: center;">
-                `;
-            }
-            inputsHtml += '</div>';
-            
-            const result = await Swal.fire({
-                title: title,
-                width: '800px',
-                html: `
-                    ${inputsHtml}
-                    <p style="color: #94a3b8; margin-top: 20px;">
-                        Enter your 12-word recovery phrase to decrypt your scripts.
-                    </p>
-                `,
-                showCancelButton: true,
-                confirmButtonText: '🔓 Unlock',
-                preConfirm: () => {
-                    const words = [];
-                    for (let i = 1; i <= 12; i++) {
-                        const val = document.getElementById(`bipWord${i}`).value.trim().toLowerCase();
-                        if (!val) {
-                            Swal.showValidationMessage('All 12 words are required!');
-                            return null;
-                        }
-                        words.push(val);
-                    }
-                    return words;
-                }
-            });
-            
-            if (result.isConfirmed) {
-                return result.value;
-            }
-            
-            return null;
-        }
-        
-        // Upload to Locker
-        async function uploadToLocker() {
-            const select = document.getElementById('lockerGameSelect');
-            const placeId = select.value;
-            
-            if (!placeId) {
-                showAlert('lockerActionResult', '⚠️ Please select a game', 'error');
-                return;
-            }
-            
-            try {
-                const bip39Words = await promptBIP39('🔑 Enter Recovery Phrase to Encrypt');
-                if (!bip39Words) return;
-                
-                showAlert('lockerActionResult', '⏳ Encrypting script... Please wait...', 'info');
-                
-                const wordlist = await CryptoUtils.loadWordlist();
-                const bip39Bytes = await CryptoUtils.bip39WordsToUint8Array(bip39Words, wordlist);
-                const masterKey = await CryptoUtils.deriveKey(bip39Bytes, 'WISEHUB_MASTER_SALT');
-                
-                const rsaPrivEnc = CryptoUtils.base64ToArrayBuffer(lockerConfig.rsa_priv_enc);
-                const rsaPriv = await CryptoUtils.decryptAESGCM(rsaPrivEnc, masterKey);
-                
-                const scriptUrl = select.options[select.selectedIndex].dataset.scriptUrl;
-                const gameName = select.options[select.selectedIndex].dataset.gameName;
-                
-                const scriptResponse = await fetch(scriptUrl);
-                const scriptContent = await scriptResponse.text();
-                
-                const randomAESKey = crypto.getRandomValues(new Uint8Array(32));
-                const scriptAESKey = await CryptoUtils.deriveKey(randomAESKey, 'SCRIPT_SALT_' + placeId);
-                
-                const encryptedScript = await CryptoUtils.encryptAESGCM(scriptContent, scriptAESKey);
-                
-                const rsaEncryptedAESKey = await CryptoUtils.encryptRSA(
-                    lockerConfig.rsa_pub,
-                    CryptoUtils.arrayBufferToBase64(randomAESKey)
-                );
-                
-                const metadata = {
-                    file_name: gameName,
-                    file_size: scriptContent.length,
-                    place_id: placeId,
-                    uploaded_at: new Date().toISOString()
-                };
-                
-                const encryptedMetadata = await CryptoUtils.encryptAESGCM(
-                    JSON.stringify(metadata),
-                    scriptAESKey
-                );
-                
-                await apiCall('/locker/upload', 'POST', {
-                    placeId: placeId,
-                    userId: ADMIN_USER_ID,
-                    encryptedScript: CryptoUtils.arrayBufferToBase64(encryptedScript),
-                    rsaEncryptedAesKey: rsaEncryptedAESKey,
-                    encryptedMetadata: CryptoUtils.arrayBufferToBase64(encryptedMetadata)
-                });
-                
-                showAlert('lockerActionResult', `✅ "${gameName}" encrypted and uploaded to locker!`, 'success');
-                
-                setTimeout(loadLockedScripts, 1500);
-                
-            } catch (error) {
-                showAlert('lockerActionResult', '❌ Upload failed: ' + error.message, 'error');
-            }
-        }
-        
-        // Load Locked Scripts
-        async function loadLockedScripts() {
-            try {
-                document.getElementById('lockedScriptsTable').innerHTML = `
-                    <div class="loading">
-                        <div class="spinner"></div>
-                        <p>Loading encrypted scripts...</p>
-                    </div>
-                `;
-                
-                const data = await apiCall(`/locker/list?userId=${ADMIN_USER_ID}`);
-                
-                if (!data.scripts || data.scripts.length === 0) {
-                    document.getElementById('lockedScriptsTable').innerHTML = `
-                        <p style="color: var(--text-muted); text-align: center; padding: 40px;">
-                            No locked scripts yet. Upload one to get started!
-                        </p>
-                    `;
-                    return;
-                }
-                
-                let html = '<table><thead><tr><th>ID</th><th>Place ID</th><th>Uploaded</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
-                
-                data.scripts.forEach(script => {
-                    const uploadDate = new Date(script.created_at).toLocaleString();
-                    
-                    html += `
-                        <tr>
-                            <td><code>${script.id}</code></td>
-                            <td><code>${script.place_id}</code></td>
-                            <td>${uploadDate}</td>
-                            <td><span class="badge badge-active">🔒 Encrypted</span></td>
-                            <td>
-                                <div class="action-buttons">
-                                    <button class="btn-small btn-success" onclick="downloadFromLocker(${script.id}, '${script.place_id}')">📥 Download</button>
-                                    <button class="btn-small btn-danger" onclick="deleteFromLocker(${script.id})">🗑️ Delete</button>
-                                </div>
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                html += '</tbody></table>';
-                document.getElementById('lockedScriptsTable').innerHTML = html;
-                
-            } catch (error) {
-                document.getElementById('lockedScriptsTable').innerHTML = `
-                    <div class="alert alert-error">❌ Error: ${error.message}</div>
-                `;
-            }
-        }
-        
-        // Download from Locker
-        async function downloadFromLocker(lockerId, placeId) {
-            try {
-                const bip39Words = await promptBIP39('🔑 Enter Recovery Phrase to Decrypt');
-                if (!bip39Words) return;
-                
-                showAlert('lockerActionResult', '⏳ Decrypting script...', 'info');
-                
-                const wordlist = await CryptoUtils.loadWordlist();
-                const bip39Bytes = await CryptoUtils.bip39WordsToUint8Array(bip39Words, wordlist);
-                const masterKey = await CryptoUtils.deriveKey(bip39Bytes, 'WISEHUB_MASTER_SALT');
-                
-                const rsaPrivEnc = CryptoUtils.base64ToArrayBuffer(lockerConfig.rsa_priv_enc);
-                const rsaPriv = await CryptoUtils.decryptAESGCM(rsaPrivEnc, masterKey);
-                
-                const data = await apiCall(`/locker/download?id=${lockerId}`);
-                
-                if (!data.success) {
-                    throw new Error(data.message || 'Download failed');
-                }
-                
-                const lockerData = data.data;
-                
-                const aesKeyBase64 = await CryptoUtils.decryptRSA(rsaPriv, lockerData.rsa_encrypted_aes_key);
-                const aesKeyBytes = CryptoUtils.base64ToArrayBuffer(aesKeyBase64);
-                const scriptAESKey = await CryptoUtils.deriveKey(aesKeyBytes, 'SCRIPT_SALT_' + placeId);
-                
-                const encryptedScript = CryptoUtils.base64ToArrayBuffer(lockerData.encrypted_content);
-                const decryptedScript = await CryptoUtils.decryptAESGCM(encryptedScript, scriptAESKey);
-                
-                const blob = new Blob([decryptedScript], { type: 'text/plain' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `script_${placeId}_${Date.now()}.lua`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                showAlert('lockerActionResult', '✅ Script decrypted and downloaded!', 'success');
-                
-            } catch (error) {
-                showAlert('lockerActionResult', '❌ Decryption failed: ' + error.message + '<br>Make sure you entered the correct recovery phrase!', 'error');
-            }
-        }
-        
-        // Delete from Locker
-        async function deleteFromLocker(lockerId) {
-            if (!confirm('Delete this encrypted script? This cannot be undone!')) return;
-            
-            try {
-                await apiCall(`/locker/delete?id=${lockerId}`, 'DELETE');
-                showAlert('lockerActionResult', '✅ Script deleted from locker!', 'success');
-                setTimeout(loadLockedScripts, 1000);
-            } catch (error) {
-                showAlert('lockerActionResult', '❌ Delete failed: ' + error.message, 'error');
-            }
-        }
         // ===== LOGS =====
         
-        // Load Logs
         async function loadLogs() {
             try {
                 const userId = document.getElementById('filterUserId').value.trim();
@@ -1959,7 +1226,6 @@
             }
         }
         
-        // Clear Logs Filter
         function clearLogsFilter() {
             document.getElementById('filterUserId').value = '';
             loadLogs();
@@ -1982,10 +1248,7 @@
             if (tabName === 'users') {
                 loadUsers();
             } else if (tabName === 'games') {
-                loadUnifiedGames();
-                updateObfuscationInfo();
-            } else if (tabName === 'locker') {
-                checkLockerStatus();
+                loadGames();
             } else if (tabName === 'logs') {
                 loadLogs();
             }
@@ -1998,12 +1261,6 @@
                 loadStats();
             }
         }, 30000);
-        
-        // ===== INITIALIZE =====
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            updateObfuscationInfo();
-        });
     </script>
 </body>
 
