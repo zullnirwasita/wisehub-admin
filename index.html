@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WiseHub Admin - Simple Manager</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -15,12 +16,18 @@
         
         :root {
             --primary: #3b82f6;
+            --primary-dark: #2563eb;
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
             --dark: #0f172a;
+            --darker: #0a0f1f;
             --text: #f1f5f9;
             --text-muted: #94a3b8;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --card-bg: rgba(30, 41, 59, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
         body {
@@ -28,6 +35,7 @@
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             color: var(--text);
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
         body::before {
@@ -67,11 +75,17 @@
         }
         
         .glass {
-            background: rgba(30, 41, 59, 0.7);
+            background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: var(--transition);
+        }
+        
+        .glass:hover {
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px);
         }
         
         .login-section {
@@ -79,6 +93,30 @@
             margin: 100px auto;
             padding: 40px;
             animation: fadeInUp 0.6s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-section::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            
+            100% {
+                transform: rotate(360deg);
+            }
         }
         
         .login-section h1 {
@@ -88,6 +126,7 @@
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            position: relative;
         }
         
         .login-section p {
@@ -129,10 +168,34 @@
             align-items: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: rgba(30, 41, 59, 0.5);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transform: translateX(-100%);
+            animation: shimmer 8s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            
+            100% {
+                transform: translateX(100%);
+            }
         }
         
         .header h1 {
@@ -140,6 +203,8 @@
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
         }
         
         .stats {
@@ -155,6 +220,13 @@
             overflow: hidden;
             animation: slideIn 0.5s ease forwards;
             opacity: 0;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
         }
         
         .stat-card::before {
@@ -209,6 +281,11 @@
             background: linear-gradient(135deg, var(--primary), #8b5cf6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover .value {
+            transform: scale(1.05);
         }
         
         .stat-card .icon {
@@ -217,6 +294,12 @@
             top: 20px;
             font-size: 2em;
             opacity: 0.3;
+            transition: var(--transition);
+        }
+        
+        .stat-card:hover .icon {
+            opacity: 0.6;
+            transform: rotate(15deg);
         }
         
         .tabs {
@@ -225,23 +308,44 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
             padding: 10px;
-            background: rgba(15, 23, 42, 0.5);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border-radius: 15px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tabs::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        
+        .tabs:hover::after {
+            transform: scaleX(1);
         }
         
         .tab {
             padding: 12px 24px;
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             border-radius: 10px;
             color: var(--text-muted);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             font-size: 0.95em;
             font-weight: 500;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .tab::before {
@@ -285,10 +389,23 @@
             margin-bottom: 20px;
             color: var(--primary);
             font-size: 1.8em;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tab-content h2::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
         }
         
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
         
         label {
@@ -307,11 +424,11 @@
             width: 100%;
             padding: 14px 18px;
             background: rgba(15, 23, 42, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             color: var(--text);
             font-size: 1em;
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
         
         input:focus,
@@ -325,15 +442,35 @@
         
         button {
             padding: 14px 28px;
-            background: linear-gradient(135deg, var(--primary), #2563eb);
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: none;
             border-radius: 12px;
             color: white;
             font-size: 1em;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: var(--transition);
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        button:active::before {
+            width: 300px;
+            height: 300px;
         }
         
         button:hover {
@@ -377,9 +514,10 @@
             overflow-x: auto;
             margin-top: 20px;
             border-radius: 15px;
-            background: rgba(15, 23, 42, 0.5);
+            background: var(--card-bg);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
         
         table {
@@ -401,10 +539,13 @@
             text-transform: uppercase;
             font-size: 0.85em;
             letter-spacing: 0.5px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
         
         tbody tr {
-            transition: all 0.3s ease;
+            transition: var(--transition);
         }
         
         tbody tr:hover {
@@ -420,6 +561,29 @@
             display: inline-block;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .badge::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: badgeShimmer 3s infinite;
+        }
+        
+        @keyframes badgeShimmer {
+            0% {
+                left: -100%;
+            }
+            
+            100% {
+                left: 100%;
+            }
         }
         
         .badge-premium {
@@ -453,6 +617,29 @@
             margin-bottom: 20px;
             animation: slideDown 0.5s ease;
             border-left: 4px solid;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .alert::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
+            animation: alertShimmer 3s infinite;
+        }
+        
+        @keyframes alertShimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            
+            100% {
+                transform: translateX(100%);
+            }
         }
         
         @keyframes slideDown {
@@ -537,6 +724,129 @@
             margin-left: 8px;
         }
         
+        /* Mobile Menu */
+        .mobile-menu-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .mobile-menu.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .mobile-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .mobile-menu-close {
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        
+        .mobile-menu-tabs {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .mobile-tab {
+            padding: 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .mobile-tab:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .mobile-tab.active {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: var(--primary);
+        }
+        
+        /* Floating Action Button */
+        .fab {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            color: white;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+            z-index: 100;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+        
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
+        }
+        
+        .fab:active {
+            transform: scale(0.95);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .stats {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+            }
+            
+            .stat-card {
+                padding: 20px;
+            }
+            
+            .stat-card .value {
+                font-size: 2em;
+            }
+        }
+        
         @media (max-width: 768px) {
             .grid-2 {
                 grid-template-columns: 1fr;
@@ -545,12 +855,300 @@
             .header {
                 flex-direction: column;
                 gap: 15px;
+                padding: 15px;
             }
+            
+            .header h1 {
+                font-size: 1.5em;
+            }
+            
+            .tabs {
+                display: none;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .fab {
+                display: flex;
+            }
+            
+            .tab-content {
+                padding: 20px;
+            }
+            
+            .table-container {
+                font-size: 0.9em;
+            }
+            
+            th,
+            td {
+                padding: 12px 8px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-small {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .login-section {
+                margin: 50px auto;
+                padding: 30px 20px;
+            }
+            
+            .login-section h1 {
+                font-size: 2em;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .tab-content {
+                padding: 15px;
+            }
+            
+            .tab-content h2 {
+                font-size: 1.5em;
+            }
+            
+            .table-container {
+                font-size: 0.8em;
+            }
+            
+            th,
+            td {
+                padding: 10px 5px;
+            }
+            
+            .badge {
+                padding: 4px 8px;
+                font-size: 0.7em;
+            }
+        }
+        
+        /* Dark mode toggle */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: var(--transition);
+        }
+        
+        .dark-mode-toggle:hover {
+            background: rgba(59, 130, 246, 0.2);
+            transform: rotate(180deg);
+        }
+        
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 25%, rgba(255, 255, 255, 0.1) 50%, rgba(255, 255, 255, 0.05) 75%);
+            background-size: 200% 100%;
+            animation: skeleton 1.5s infinite;
+        }
+        
+        @keyframes skeleton {
+            0% {
+                background-position: 200% 0;
+            }
+            
+            100% {
+                background-position: -200% 0;
+            }
+        }
+        
+        .skeleton-text {
+            height: 1em;
+            margin-bottom: 0.5em;
+            border-radius: 4px;
+        }
+        
+        .skeleton-card {
+            height: 100px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: var(--darker);
+            color: var(--text);
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.8em;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        /* Search bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 18px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 1em;
+            transition: var(--transition);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+        
+        /* Progress bar */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #8b5cf6);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        /* Card hover effect */
+        .card-hover {
+            transition: var(--transition);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .notification.error {
+            border-left: 4px solid var(--danger);
+        }
+        
+        .notification.info {
+            border-left: 4px solid var(--primary);
         }
     </style>
 </head>
 
 <body>
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-header">
+            <h1>🛡️ WiseHub</h1>
+            <button class="mobile-menu-close" onclick="toggleMobileMenu()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="mobile-menu-tabs">
+            <div class="mobile-tab active" onclick="switchTabMobile('users')">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+            </div>
+            <div class="mobile-tab" onclick="switchTabMobile('add')">
+                <i class="fas fa-plus"></i>
+                <span>Add User</span>
+            </div>
+            <div class="mobile-tab" onclick="switchTabMobile('games')">
+                <i class="fas fa-gamepad"></i>
+                <span>Games</span>
+            </div>
+            <div class="mobile-tab" onclick="switchTabMobile('logs')">
+                <i class="fas fa-chart-line"></i>
+                <span>Logs</span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon" id="darkModeIcon"></i>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification"></div>
+    
     <!-- Login Section -->
     <div class="login-section glass" id="loginSection">
         <h1>🛡️ WiseHub</h1>
@@ -571,44 +1169,77 @@
     <div class="container dashboard" id="dashboard">
         <div class="header glass">
             <h1>🛡️ WiseHub Control</h1>
-            <button class="btn-danger" onclick="logout()">Logout</button>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <button class="btn-danger" onclick="logout()">Logout</button>
+            </div>
         </div>
         
         <!-- Stats -->
         <div class="stats">
-            <div class="stat-card glass">
+            <div class="stat-card glass" onclick="showStatDetails('users')">
                 <span class="icon">👥</span>
                 <h3>Total Users</h3>
                 <div class="value" id="totalUsers">-</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="usersProgress" style="width: 0%"></div>
+                </div>
             </div>
-            <div class="stat-card glass">
+            <div class="stat-card glass" onclick="showStatDetails('active')">
                 <span class="icon">✅</span>
                 <h3>Active Users</h3>
                 <div class="value" id="activeUsers">-</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="activeProgress" style="width: 0%"></div>
+                </div>
             </div>
-            <div class="stat-card glass">
+            <div class="stat-card glass" onclick="showStatDetails('logins')">
                 <span class="icon">📊</span>
                 <h3>Today's Logins</h3>
                 <div class="value" id="todayLogins">-</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="loginsProgress" style="width: 0%"></div>
+                </div>
             </div>
-            <div class="stat-card glass">
+            <div class="stat-card glass" onclick="showStatDetails('games')">
                 <span class="icon">🎮</span>
                 <h3>Games</h3>
                 <div class="value" id="totalGames">-</div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="gamesProgress" style="width: 0%"></div>
+                </div>
             </div>
         </div>
         
         <!-- Tabs -->
         <div class="tabs">
-            <button class="tab active" onclick="switchTab('users')">👥 Users</button>
-            <button class="tab" onclick="switchTab('add')">➕ Add User</button>
-            <button class="tab" onclick="switchTab('games')">🎮 Games</button>
-            <button class="tab" onclick="switchTab('logs')">📊 Logs</button>
+            <button class="tab active" onclick="switchTab('users')">
+                <i class="fas fa-users"></i>
+                <span>Users</span>
+            </button>
+            <button class="tab" onclick="switchTab('add')">
+                <i class="fas fa-plus"></i>
+                <span>Add User</span>
+            </button>
+            <button class="tab" onclick="switchTab('games')">
+                <i class="fas fa-gamepad"></i>
+                <span>Games</span>
+            </button>
+            <button class="tab" onclick="switchTab('logs')">
+                <i class="fas fa-chart-line"></i>
+                <span>Logs</span>
+            </button>
         </div>
         
         <!-- Tab: Users -->
         <div class="tab-content glass active" id="tab-users">
             <h2>VIP Users Management</h2>
+            <div class="search-container">
+                <input type="text" class="search-input" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()">
+                <i class="fas fa-search search-icon"></i>
+            </div>
             <button onclick="loadUsers()" class="btn-secondary">🔄 Refresh</button>
             <div class="table-container" id="usersTable"></div>
         </div>
@@ -659,7 +1290,7 @@
             </p>
             
             <!-- Add New Game -->
-            <div style="background: rgba(59, 130, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary);">
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary);" class="card-hover">
                 <h3 style="color: var(--primary); margin-bottom: 15px;">➕ Add New Game</h3>
                 <div class="grid-2">
                     <div class="form-group">
@@ -683,7 +1314,7 @@
             </div>
             
             <!-- Update Script -->
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--success);">
+            <div style="background: rgba(16, 185, 129, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--success);" class="card-hover">
                 <h3 style="color: var(--success); margin-bottom: 15px;">🔄 Update Existing Script</h3>
                 <div class="grid-2">
                     <div class="form-group">
@@ -734,12 +1365,18 @@
         </div>
     </div>
     
+    <!-- Floating Action Button -->
+    <button class="fab" id="fab" onclick="scrollToTop()">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
     <script>
         // ===== CONFIGURATION =====
         let API_URL = 'https://zullstore21.workers.dev'; // CHANGE THIS!
         let API_KEY = 'admin'; // CHANGE THIS!
         
         let currentGames = [];
+        let isDarkMode = false;
         
         // ===== UTILITIES =====
         
@@ -782,6 +1419,17 @@
             }
         }
         
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+        
         function formatTimeAgo(timestamp) {
             const now = new Date();
             const past = new Date(timestamp);
@@ -818,6 +1466,8 @@
                 loadStats();
                 loadUsers();
                 loadGames();
+                
+                showNotification('Login successful! Welcome to WiseHub Admin', 'success');
             } catch (error) {
                 showAlert('loginError', '❌ Login failed: ' + error.message, 'error');
             }
@@ -831,6 +1481,8 @@
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('apiUrl').value = '';
             document.getElementById('apiKey').value = '';
+            
+            showNotification('Logged out successfully', 'info');
         }
         
         // ===== STATS =====
@@ -842,9 +1494,57 @@
                 document.getElementById('activeUsers').textContent = stats.activeUsers || 0;
                 document.getElementById('todayLogins').textContent = stats.todayLogins || 0;
                 document.getElementById('totalGames').textContent = stats.totalGames || 0;
+                
+                // Animate progress bars
+                animateProgress('usersProgress', stats.totalUsers || 0, 100);
+                animateProgress('activeProgress', stats.activeUsers || 0, stats.totalUsers || 1);
+                animateProgress('loginsProgress', stats.todayLogins || 0, 50);
+                animateProgress('gamesProgress', stats.totalGames || 0, 20);
             } catch (error) {
                 console.error('Stats error:', error);
             }
+        }
+        
+        function animateProgress(id, value, max) {
+            const progressBar = document.getElementById(id);
+            if (!progressBar) return;
+            
+            const percentage = Math.min((value / max) * 100, 100);
+            progressBar.style.width = '0%';
+            
+            setTimeout(() => {
+                progressBar.style.width = `${percentage}%`;
+            }, 100);
+        }
+        
+        function showStatDetails(statType) {
+            let title, content;
+            
+            switch (statType) {
+                case 'users':
+                    title = 'Total Users';
+                    content = 'This represents the total number of registered users in your system.';
+                    break;
+                case 'active':
+                    title = 'Active Users';
+                    content = 'These are users who have logged in within the last 30 days.';
+                    break;
+                case 'logins':
+                    title = 'Today\'s Logins';
+                    content = 'Number of successful logins today across all users.';
+                    break;
+                case 'games':
+                    title = 'Total Games';
+                    content = 'Number of games registered in your system.';
+                    break;
+            }
+            
+            Swal.fire({
+                title: title,
+                text: content,
+                icon: 'info',
+                confirmButtonText: 'Got it'
+            });
         }
         
         // ===== USER MANAGEMENT =====
@@ -892,6 +1592,16 @@
             }
         }
         
+        function filterUsers() {
+            const searchTerm = document.getElementById('userSearch').value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTable tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+        
         async function addUser() {
             const userId = document.getElementById('newUserId').value.trim();
             const username = document.getElementById('newUsername').value.trim();
@@ -921,6 +1631,8 @@
                 
                 loadUsers();
                 loadStats();
+                
+                showNotification(`User ${userId} added successfully!`, 'success');
             } catch (error) {
                 showAlert('addResult', `❌ Error: ${error.message}`, 'error');
             }
@@ -940,6 +1652,8 @@
                 });
                 loadUsers();
                 loadStats();
+                
+                showNotification(`User ${userId} has been removed`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
@@ -958,6 +1672,8 @@
                     showConfirmButton: false
                 });
                 loadUsers();
+                
+                showNotification(`HWID reset for user ${userId}`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
@@ -1060,6 +1776,8 @@
                 
                 loadGames();
                 loadStats();
+                
+                showNotification(`Game ${gameName} added successfully!`, 'success');
             } catch (error) {
                 showAlert('addGameResult', `❌ Error: ${error.message}`, 'error');
             }
@@ -1097,6 +1815,8 @@
                 document.getElementById('updateScriptUrl').value = '';
                 
                 loadGames();
+                
+                showNotification(`Script updated to version ${result.data.version}`, 'success');
             } catch (error) {
                 showAlert('updateScriptResult', `❌ Error: ${error.message}`, 'error');
             }
@@ -1149,6 +1869,8 @@
                 });
                 loadGames();
                 loadStats();
+                
+                showNotification(`Game ${isActive ? 'enabled' : 'disabled'}`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
@@ -1182,6 +1904,7 @@
                 loadGames();
                 loadStats();
                 
+                showNotification(`Game ${gameName} has been deleted`, 'success');
             } catch (error) {
                 Swal.fire('Error', error.message, 'error');
             }
@@ -1254,6 +1977,68 @@
             }
         }
         
+        function switchTabMobile(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const mobileTabs = document.querySelectorAll('.mobile-tab');
+            mobileTabs.forEach(tab => tab.classList.remove('active'));
+            
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) selectedTab.classList.add('active');
+            
+            event.target.closest('.mobile-tab').classList.add('active');
+            
+            toggleMobileMenu();
+            
+            if (tabName === 'users') {
+                loadUsers();
+            } else if (tabName === 'games') {
+                loadGames();
+            } else if (tabName === 'logs') {
+                loadLogs();
+            }
+        }
+        
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            mobileMenu.classList.toggle('active');
+        }
+        
+        // ===== UI ENHANCEMENTS =====
+        
+        function toggleDarkMode() {
+            isDarkMode = !isDarkMode;
+            const icon = document.getElementById('darkModeIcon');
+            
+            if (isDarkMode) {
+                document.documentElement.style.setProperty('--dark', '#0a0f1f');
+                document.documentElement.style.setProperty('--darker', '#050810');
+                icon.className = 'fas fa-sun';
+            } else {
+                document.documentElement.style.setProperty('--dark', '#0f172a');
+                document.documentElement.style.setProperty('--darker', '#0a0f1f');
+                icon.className = 'fas fa-moon';
+            }
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Show/hide FAB based on scroll position
+        window.addEventListener('scroll', () => {
+            const fab = document.getElementById('fab');
+            if (window.scrollY > 300) {
+                fab.style.display = 'flex';
+            } else {
+                fab.style.display = 'none';
+            }
+        });
+        
         // ===== AUTO-REFRESH =====
         
         setInterval(() => {
@@ -1261,6 +2046,37 @@
                 loadStats();
             }
         }, 30000);
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for saved API credentials
+            const savedApiUrl = localStorage.getItem('apiUrl');
+            const savedApiKey = localStorage.getItem('apiKey');
+            
+            if (savedApiUrl) document.getElementById('apiUrl').value = savedApiUrl;
+            if (savedApiKey) document.getElementById('apiKey').value = savedApiKey;
+            
+            // Add smooth scrolling
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+        });
+        
+        // Save API credentials on successful login
+        const originalLogin = login;
+        login = function() {
+            originalLogin().then(() => {
+                localStorage.setItem('apiUrl', API_URL);
+                localStorage.setItem('apiKey', API_KEY);
+            }).catch(err => {
+                console.error(err);
+            });
+        };
     </script>
 </body>
 
