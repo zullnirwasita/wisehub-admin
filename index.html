@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>WiseHub Admin Panel - Unified Manager</title>
     <style>
         * {
             margin: 0;
@@ -34,7 +34,6 @@
             overflow-x: hidden;
         }
         
-        /* Animated Background */
         body::before {
             content: '';
             position: fixed;
@@ -72,7 +71,6 @@
             padding: 20px;
         }
         
-        /* Glassmorphism Cards */
         .glass {
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
@@ -81,7 +79,6 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
         
-        /* Login Section */
         .login-section {
             max-width: 450px;
             margin: 100px auto;
@@ -117,7 +114,6 @@
             }
         }
         
-        /* Dashboard */
         .dashboard {
             display: none;
             animation: fadeIn 0.5s ease;
@@ -133,7 +129,6 @@
             }
         }
         
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -171,7 +166,6 @@
             box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
         }
         
-        /* Stats Grid */
         .stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -263,7 +257,6 @@
             opacity: 0.3;
         }
         
-        /* Tabs */
         .tabs {
             display: flex;
             gap: 10px;
@@ -317,7 +310,6 @@
             left: 0;
         }
         
-        /* Tab Content */
         .tab-content {
             display: none;
             padding: 30px;
@@ -334,7 +326,6 @@
             font-size: 1.8em;
         }
         
-        /* Form Elements */
         .form-group {
             margin-bottom: 20px;
         }
@@ -371,7 +362,6 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
         
-        /* Buttons */
         button {
             padding: 14px 28px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -414,6 +404,12 @@
             transform: translateY(0);
         }
         
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
         .btn-secondary {
             background: linear-gradient(135deg, var(--dark-lighter), #475569);
             box-shadow: 0 4px 15px rgba(71, 85, 105, 0.3);
@@ -446,7 +442,6 @@
             font-size: 0.85em;
         }
         
-        /* Table */
         .table-container {
             overflow-x: auto;
             margin-top: 20px;
@@ -486,7 +481,6 @@
             transform: scale(1.01);
         }
         
-        /* Badges */
         .badge {
             padding: 6px 12px;
             border-radius: 8px;
@@ -522,7 +516,6 @@
             color: white;
         }
         
-        /* Alert */
         .alert {
             padding: 16px 20px;
             border-radius: 12px;
@@ -561,7 +554,6 @@
             color: #93c5fd;
         }
         
-        /* Loading */
         .loading {
             text-align: center;
             padding: 40px;
@@ -583,7 +575,6 @@
             }
         }
         
-        /* Code */
         code {
             background: rgba(15, 23, 42, 0.8);
             padding: 4px 8px;
@@ -593,21 +584,18 @@
             font-size: 0.9em;
         }
         
-        /* Grid */
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
         
-        /* Action Buttons */
         .action-buttons {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
         
-        /* Kill Switch Special */
         .kill-switch {
             position: relative;
             display: inline-flex;
@@ -646,7 +634,6 @@
             left: 33px;
         }
         
-        /* Responsive */
         @media (max-width: 768px) {
             .grid-2 {
                 grid-template-columns: 1fr;
@@ -667,7 +654,6 @@
             }
         }
         
-        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 10px;
             height: 10px;
@@ -689,18 +675,17 @@
     <script src="js/crypto-utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 <body>
     <!-- Login Section -->
     <div class="login-section glass" id="loginSection">
         <h1>🛡️ WiseHub</h1>
-        <p>Admin Control Panel</p>
+        <p>Admin Control Panel - Unified Manager</p>
         <div class="form-group">
-            <label>Username</label>
+            <label>API URL</label>
             <input type="text" id="apiUrl" placeholder="https://your-api.workers.dev" value="">
         </div>
         <div class="form-group">
-            <label>Password</label>
+            <label>API Key</label>
             <input type="password" id="apiKey" placeholder="Enter your secret key" value="">
         </div>
         <button onclick="login()">🔐 Login</button>
@@ -742,13 +727,144 @@
         <div class="tabs">
             <button class="tab active" onclick="switchTab('users')">👥 Users</button>
             <button class="tab" onclick="switchTab('add')">➕ Add User</button>
-            <button class="tab" onclick="switchTab('games')">🎮 Games</button>
-            <button class="tab" onclick="switchTab('scripts')">⚙️ Script Control</button>
+            <button class="tab" onclick="switchTab('games')">🎮 Games Manager</button>
+            <button class="tab" onclick="switchTab('locker')">🔐 Locker</button>
             <button class="tab" onclick="switchTab('logs')">📊 Logs</button>
         </div>
+        <!-- Tab: Users -->
+        <div class="tab-content glass active" id="tab-users">
+            <h2>VIP Users Management</h2>
+            <button onclick="loadUsers()" class="btn-secondary">🔄 Refresh</button>
+            <div class="table-container" id="usersTable"></div>
+        </div>
         
-        <button class="tab" onclick="switchTab('locker')">🔐 Locker</button>
-        
+        <!-- Tab: Add User -->
+        <div class="tab-content glass" id="tab-add">
+            <h2>Add New VIP User</h2>
+            <div class="grid-2">
+                <div>
+                    <div class="form-group">
+                        <label>Roblox User ID</label>
+                        <input type="text" id="newUserId" placeholder="123456789">
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" id="newUsername" placeholder="PlayerName">
+                    </div>
+                    <div class="form-group">
+                        <label>Tier</label>
+                        <select id="newTier">
+                            <option value="basic">Basic</option>
+                            <option value="premium">Premium</option>
+                            <option value="vip">VIP</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <div class="form-group">
+                        <label>Custom Key (optional)</label>
+                        <input type="text" id="newKey" placeholder="Leave empty for auto-generate">
+                        <button onclick="generateRandomKey()" class="btn-secondary" style="margin-top: 10px;">🎲 Generate Key</button>
+                    </div>
+                    <div class="form-group">
+                        <label>Duration (Days)</label>
+                        <input type="number" id="newDays" value="30" min="1">
+                    </div>
+                </div>
+            </div>
+            <button onclick="addUser()" class="btn-success">➕ Add User</button>
+            <div id="addResult"></div>
+        </div>
+        <!-- Tab: Unified Game Manager -->
+        <div class="tab-content glass" id="tab-games">
+            <h2>🎮 Unified Game Manager</h2>
+            <p style="color: var(--text-muted); margin-bottom: 20px;">
+                Create games, upload scripts, obfuscate with MoonVeil, and backup to Locker - all in one place
+            </p>
+            
+            <!-- Create New Game -->
+            <div style="background: rgba(59, 130, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--primary);">
+                <h3 style="color: var(--primary); margin-bottom: 15px;">➕ Create New Game</h3>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Place ID</label>
+                        <input type="text" id="newGamePlaceId" placeholder="606849621">
+                    </div>
+                    <div class="form-group">
+                        <label>Game Name</label>
+                        <input type="text" id="newGameName" placeholder="Jailbreak">
+                    </div>
+                </div>
+                <button onclick="createNewGame()" class="btn-success">➕ Create Game Entry</button>
+                <div id="createGameResult"></div>
+            </div>
+            
+            <!-- Upload & Process Script -->
+            <div style="background: rgba(139, 92, 246, 0.1); padding: 25px; border-radius: 15px; margin-bottom: 30px; border-left: 4px solid var(--secondary);">
+                <h3 style="color: var(--secondary); margin-bottom: 15px;">🚀 Upload & Process Script</h3>
+                
+                <div class="form-group">
+                    <label>Select Game</label>
+                    <select id="uploadGameSelect" onchange="updateObfuscationInfo()">
+                        <option value="">-- Select a game to upload script --</option>
+                    </select>
+                </div>
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Upload Lua Script</label>
+                        <input type="file" id="gameScriptFile" accept=".lua,.txt" onchange="handleScriptFileSelect(event)" style="cursor: pointer; background: rgba(15, 23, 42, 0.9);">
+                        <div id="scriptFileSelected" style="display: none; margin-top: 8px; padding: 10px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; color: #6ee7b7; font-size: 0.9em;"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Obfuscation Profile 🌙</label>
+                        <select id="obfuscationProfile" onchange="updateObfuscationInfo()">
+                            <option value="none">🚫 None - No obfuscation</option>
+                            <option value="light">⚡ Light - Basic protection</option>
+                            <option value="medium" selected>🛡️ Medium - Balanced (Recommended)</option>
+                            <option value="aggressive">🔥 Aggressive - Maximum security</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="obfuscationInfo" style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; margin: 15px 0; font-size: 0.9em; color: var(--text-muted);"></div>
+                
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; background: rgba(15, 23, 42, 0.5); padding: 12px; border-radius: 10px;">
+                        <input type="checkbox" id="saveToLocker" checked style="width: auto; cursor: pointer;">
+                        <span>💾 Backup original script to Locker (encrypted storage)</span>
+                    </label>
+                </div>
+                
+                <button onclick="processGameScript()" id="processScriptBtn" class="btn-success">
+                    🚀 Process Script (Upload + Obfuscate + Backup)
+                </button>
+                
+                <div id="processScriptProgress" style="display: none; margin-top: 20px;">
+                    <div class="alert alert-info">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p id="processScriptStatus">⏳ Processing...</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="processScriptResult"></div>
+            </div>
+            
+            <!-- Games List -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: var(--primary);">📊 Existing Games</h3>
+                <button onclick="loadUnifiedGames()" class="btn-secondary">🔄 Refresh</button>
+            </div>
+            
+            <div class="table-container" id="unifiedGamesTable">
+                <p style="text-align: center; color: var(--text-muted); padding: 40px;">
+                    Click refresh to load games
+                </p>
+            </div>
+        </div>
         <!-- Tab: Locker -->
         <div class="tab-content glass" id="tab-locker">
             <h2>🔐 Script Locker System</h2>
@@ -837,139 +953,6 @@
             
             <div id="lockerActionResult"></div>
         </div>
-        
-        <!-- Tab: Users -->
-        <div class="tab-content glass active" id="tab-users">
-            <h2>VIP Users Management</h2>
-            <button onclick="loadUsers()" class="btn-secondary">🔄 Refresh</button>
-            <div class="table-container" id="usersTable"></div>
-        </div>
-        
-        <!-- Tab: Add User -->
-        <div class="tab-content glass" id="tab-add">
-            <h2>Add New VIP User</h2>
-            <div class="grid-2">
-                <div>
-                    <div class="form-group">
-                        <label>Roblox User ID</label>
-                        <input type="text" id="newUserId" placeholder="123456789">
-                    </div>
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input type="text" id="newUsername" placeholder="PlayerName">
-                    </div>
-                    <div class="form-group">
-                        <label>Tier</label>
-                        <select id="newTier">
-                            <option value="basic">Basic</option>
-                            <option value="premium">Premium</option>
-                            <option value="vip">VIP</option>
-                        </select>
-                    </div>
-                </div>
-                <div>
-                    <div class="form-group">
-                        <label>Custom Key (optional)</label>
-                        <input type="text" id="newKey" placeholder="Leave empty for auto-generate">
-                        <button onclick="generateRandomKey()" class="btn-secondary" style="margin-top: 10px;">🎲 Generate Key</button>
-                    </div>
-                    <div class="form-group">
-                        <label>Duration (Days)</label>
-                        <input type="number" id="newDays" value="30" min="1">
-                    </div>
-                </div>
-            </div>
-            <button onclick="addUser()" class="btn-success">➕ Add User</button>
-            <div id="addResult"></div>
-        </div>
-        
-        <!-- Tab: Games -->
-        <div class="tab-content glass" id="tab-games">
-            <h2>Game Scripts Management</h2>
-            <button onclick="loadGames()" class="btn-secondary">🔄 Refresh</button>
-            <div class="table-container" id="gamesTable"></div>
-            
-            <h2 style="margin-top: 40px;">Add New Game</h2>
-            <div class="grid-2">
-                <div>
-                    <div class="form-group">
-                        <label>Place ID</label>
-                        <input type="text" id="newPlaceId" placeholder="606849621">
-                    </div>
-                    <div class="form-group">
-                        <label>Game Name</label>
-                        <input type="text" id="newGameName" placeholder="Jailbreak">
-                    </div>
-                </div>
-                <div>
-                    <div class="form-group">
-                        <label>Script URL</label>
-                        <input type="text" id="newScriptUrl" placeholder="https://raw.githubusercontent.com/...">
-                    </div>
-                    <div class="form-group">
-                        <label>Version</label>
-                        <input type="text" id="newVersion" value="1.0">
-                    </div>
-                </div>
-            </div>
-            <button onclick="addGame()" class="btn-success">🎮 Add Game</button>
-            <div id="gameResult"></div>
-        </div>
-        
-        <!-- Tab: Script Control -->
-        <div class="tab-content glass" id="tab-scripts">
-            <h2>⚡ Script Control Center</h2>
-            <p style="color: var(--text-muted); margin-bottom: 20px;">Manage, update, and obfuscate your game scripts</p>
-            
-            <div class="form-group">
-                <label>Select Game</label>
-                <select id="scriptGameSelect" onchange="loadScriptDetails()">
-                    <option value="">-- Select a game --</option>
-                </select>
-            </div>
-            
-            <div id="scriptDetails" style="display: none;">
-                <div class="grid-2">
-                    <div>
-                        <div class="form-group">
-                            <label>Game Name</label>
-                            <input type="text" id="scriptGameName" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label>Place ID</label>
-                            <input type="text" id="scriptPlaceId" readonly>
-                        </div>
-                        <div class="form-group">
-                            <label>Current Version</label>
-                            <input type="text" id="scriptVersion" readonly>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label>Status</label>
-                            <div class="kill-switch">
-                                <span id="killSwitchLabel">Disabled</span>
-                                <div class="kill-switch-toggle" id="killSwitchToggle" onclick="toggleKillSwitch()"></div>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>Script URL</label>
-                            <input type="text" id="scriptUrl" readonly>
-                        </div>
-                    </div>
-                </div>
-                
-                <h3 style="margin-top: 30px; margin-bottom: 15px; color: var(--primary);">🔧 Script Actions</h3>
-                <div class="action-buttons">
-                    <button onclick="updateScript()" class="btn-secondary">📝 Update Script</button>
-                    <button onclick="obfuscateScript()" class="btn-success">🔒 Obfuscate Script</button>
-                    <button onclick="deleteGame()" class="btn-danger">🗑️ Delete Game</button>
-                </div>
-                
-                <div id="scriptActionResult"></div>
-            </div>
-        </div>
-        
         <!-- Tab: Logs -->
         <div class="tab-content glass" id="tab-logs">
             <h2>Login Activity Logs</h2>
@@ -989,11 +972,25 @@
             <div class="table-container" id="logsTable"></div>
         </div>
     </div>
-    
     <script>
-        let API_URL = '';
-        let API_KEY = '';
+        // ===== CONFIGURATION =====
+        // IMPORTANT: Change these values!
+        let API_URL = 'https://your-worker.workers.dev'; // Replace with your Worker URL
+        let API_KEY = 'admin'; // Replace with your API key
+        
         let currentGames = [];
+        const ADMIN_USER_ID = 'admin';
+        let lockerConfig = null;
+        
+        // ===== OBFUSCATION INFO =====
+        const OBFUSCATION_INFO = {
+            none: '<strong>No Obfuscation</strong><br>Script remains in original form. Fastest performance, no protection.',
+            light: '<strong>Light Protection</strong><br>✅ String encryption<br>📊 Performance: ~5% overhead<br>🛡️ Protection: Basic<br>⏱️ Process time: ~2-3 seconds',
+            medium: '<strong>Medium Protection (Recommended)</strong><br>✅ Virtualization<br>✅ String encryption<br>✅ Control flow obfuscation<br>📊 Performance: ~15% overhead<br>🛡️ Protection: Good<br>⏱️ Process time: ~4-6 seconds',
+            aggressive: '<strong>Maximum Protection</strong><br>✅ Full virtualization<br>✅ String encryption<br>✅ Control flow obfuscation<br>✅ Anti-tamper protection<br>✅ Constant encryption<br>📊 Performance: ~30% overhead<br>🛡️ Protection: Maximum<br>⏱️ Process time: ~8-12 seconds'
+        };
+        
+        // ===== UTILITY FUNCTIONS =====
         
         // Generate Random Key
         function generateRandomKey() {
@@ -1006,16 +1003,25 @@
             document.getElementById('newKey').value = key;
         }
         
-        // API Call Helper
-        async function apiCall(endpoint, method = 'GET', body = null) {
+        // API Call Helper - UPDATED to support FormData
+        async function apiCall(endpoint, method = 'GET', body = null, isFormData = false) {
             const options = {
                 method,
                 headers: {
-                    'Content-Type': 'application/json',
                     'x-api-key': API_KEY
                 }
             };
-            if (body) options.body = JSON.stringify(body);
+            
+            if (body) {
+                if (isFormData) {
+                    // For file upload - don't set Content-Type, browser will set it automatically
+                    options.body = body;
+                } else {
+                    // For JSON
+                    options.headers['Content-Type'] = 'application/json';
+                    options.body = JSON.stringify(body);
+                }
+            }
             
             const response = await fetch(API_URL + endpoint, options);
             const data = await response.json();
@@ -1031,9 +1037,13 @@
             const elem = document.getElementById(id);
             if (elem) {
                 elem.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
-                setTimeout(() => elem.innerHTML = '', 5000);
+                if (type === 'success') {
+                    setTimeout(() => elem.innerHTML = '', 5000);
+                }
             }
         }
+        
+        // ===== AUTHENTICATION =====
         
         // Login
         async function login() {
@@ -1054,8 +1064,8 @@
                 
                 loadStats();
                 loadUsers();
-                loadGames();
-                populateGameSelect();
+                loadUnifiedGames();
+                updateObfuscationInfo();
             } catch (error) {
                 showAlert('loginError', '❌ Login failed: ' + error.message, 'error');
             }
@@ -1072,7 +1082,8 @@
             document.getElementById('apiKey').value = '';
         }
         
-        // Load Stats
+        // ===== DASHBOARD STATS =====
+        
         async function loadStats() {
             try {
                 const stats = await apiCall('/admin/stats');
@@ -1084,6 +1095,7 @@
                 console.error('Stats error:', error);
             }
         }
+        // ===== USER MANAGEMENT =====
         
         // Load Users
         async function loadUsers() {
@@ -1190,318 +1202,395 @@
                 showAlert('usersTable', `❌ Error: ${error.message}`, 'error');
             }
         }
+        // ===== UNIFIED GAME MANAGER =====
         
-        // Load Games
-        async function loadGames() {
+        // Create New Game
+        async function createNewGame() {
+            const placeId = document.getElementById('newGamePlaceId').value.trim();
+            const gameName = document.getElementById('newGameName').value.trim();
+            
+            if (!placeId || !gameName) {
+                showAlert('createGameResult', '⚠️ Please fill all fields', 'error');
+                return;
+            }
+            
+            try {
+                const result = await apiCall('/admin/game/create', 'POST', { placeId, gameName });
+                showAlert('createGameResult', result.message + '<br><small>Now you can upload a script for this game.</small>', 'success');
+                
+                document.getElementById('newGamePlaceId').value = '';
+                document.getElementById('newGameName').value = '';
+                
+                loadUnifiedGames();
+                populateGameSelectForUpload();
+                loadStats();
+                
+            } catch (error) {
+                showAlert('createGameResult', '❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Handle Script File Select
+        function handleScriptFileSelect(event) {
+            const file = event.target.files[0];
+            const display = document.getElementById('scriptFileSelected');
+            
+            if (file) {
+                // Validate file size (max 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('❌ File too large! Maximum 5MB allowed.');
+                    event.target.value = '';
+                    display.style.display = 'none';
+                    return;
+                }
+                
+                // Validate extension
+                if (!file.name.endsWith('.lua') && !file.name.endsWith('.txt')) {
+                    alert('❌ Invalid file type! Only .lua or .txt files allowed.');
+                    event.target.value = '';
+                    display.style.display = 'none';
+                    return;
+                }
+                
+                display.style.display = 'block';
+                display.innerHTML = `✅ Selected: <strong>${file.name}</strong> (${(file.size / 1024).toFixed(2)} KB)`;
+            } else {
+                display.style.display = 'none';
+            }
+        }
+        
+        // Update Obfuscation Info
+        function updateObfuscationInfo() {
+            const profile = document.getElementById('obfuscationProfile').value;
+            document.getElementById('obfuscationInfo').innerHTML = OBFUSCATION_INFO[profile];
+        }
+        
+        // Populate Game Select for Upload
+        function populateGameSelectForUpload() {
+            const select = document.getElementById('uploadGameSelect');
+            select.innerHTML = '<option value="">-- Select a game to upload script --</option>';
+            
+            if (currentGames && currentGames.length > 0) {
+                currentGames.forEach(game => {
+                    const option = document.createElement('option');
+                    option.value = game.place_id;
+                    option.textContent = `${game.game_name} (${game.place_id}) - ${game.version || 'No script yet'}`;
+                    select.appendChild(option);
+                });
+            }
+        }
+        
+        // Process Game Script (Main Function)
+        async function processGameScript() {
+            const placeId = document.getElementById('uploadGameSelect').value;
+            const profile = document.getElementById('obfuscationProfile').value;
+            const saveToLocker = document.getElementById('saveToLocker').checked;
+            const scriptFile = document.getElementById('gameScriptFile').files[0];
+            
+            if (!placeId) {
+                showAlert('processScriptResult', '⚠️ Please select a game', 'error');
+                return;
+            }
+            
+            if (!scriptFile) {
+                showAlert('processScriptResult', '⚠️ Please select a script file', 'error');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('placeId', placeId);
+            formData.append('profile', profile);
+            formData.append('saveToLocker', saveToLocker);
+            formData.append('userId', ADMIN_USER_ID);
+            formData.append('script', scriptFile);
+            
+            try {
+                document.getElementById('processScriptProgress').style.display = 'block';
+                document.getElementById('processScriptResult').innerHTML = '';
+                document.getElementById('processScriptBtn').disabled = true;
+                
+                // Status updates
+                const statusMessages = [
+                    '📤 Uploading script...',
+                    profile !== 'none' ? '🌙 Obfuscating with MoonVeil AI...' : '⏭️ Skipping obfuscation...',
+                    saveToLocker ? '🔐 Backing up to encrypted Locker...' : '⏭️ Skipping backup...',
+                    '💾 Updating database...',
+                    '✅ Finalizing...'
+                ];
+                
+                let step = 0;
+                const interval = setInterval(() => {
+                    if (step < statusMessages.length) {
+                        document.getElementById('processScriptStatus').textContent = statusMessages[step];
+                        step++;
+                    }
+                }, profile === 'aggressive' ? 1500 : profile === 'medium' ? 1000 : 600);
+                
+                const result = await apiCall('/admin/game/process-script', 'POST', formData, true);
+                
+                clearInterval(interval);
+                document.getElementById('processScriptProgress').style.display = 'none';
+                document.getElementById('processScriptBtn').disabled = false;
+                
+                const data = result.data;
+                
+                // Show result with stats
+                let resultHTML = `<div class="alert alert-success">${result.message}</div>`;
+                
+                resultHTML += '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 20px 0;">';
+                
+                resultHTML += `
+                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #0ea5e9;">
+                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">GAME</h4>
+                        <div style="color: #0ea5e9; font-size: 1.3em; font-weight: bold;">${data.gameName}</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #8b5cf6;">
+                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">VERSION</h4>
+                        <div style="color: #8b5cf6; font-size: 1.3em; font-weight: bold;">${data.version}</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #10b981;">
+                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">PROFILE</h4>
+                        <div style="color: #10b981; font-size: 1.3em; font-weight: bold;">${data.profile}</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b;">
+                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">ORIGINAL SIZE</h4>
+                        <div style="color: #f59e0b; font-size: 1.3em; font-weight: bold;">${(data.originalSize / 1024).toFixed(2)} KB</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #f59e0b;">
+                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">PROCESSED SIZE</h4>
+                        <div style="color: #f59e0b; font-size: 1.3em; font-weight: bold;">${(data.processedSize / 1024).toFixed(2)} KB</div>
+                    </div>
+                    <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #ef4444;">
+                        <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">SIZE RATIO</h4>
+                        <div style="color: #ef4444; font-size: 1.3em; font-weight: bold;">${data.compressionRatio}</div>
+                    </div>
+                `;
+                
+                if (data.lockerBackupId) {
+                    resultHTML += `
+                        <div style="background: rgba(15, 23, 42, 0.5); padding: 15px; border-radius: 10px; border-left: 4px solid #0ea5e9;">
+                            <h4 style="color: #94a3b8; font-size: 0.85em; margin-bottom: 5px;">LOCKER BACKUP</h4>
+                            <div style="color: #0ea5e9; font-size: 1.3em; font-weight: bold;">✅ ID: ${data.lockerBackupId}</div>
+                        </div>
+                    `;
+                }
+                
+                resultHTML += '</div>';
+                
+                // Download buttons
+                resultHTML += '<div style="display: flex; gap: 10px; margin-top: 20px;">';
+                resultHTML += `<button onclick="downloadProcessedScript('${data.placeId}', '${data.version}')" class="btn-success">📥 Download Processed Script</button>`;
+                resultHTML += `<button onclick="copyProcessedScript('${data.placeId}', '${data.version}')" class="btn-secondary">📋 Copy to Clipboard</button>`;
+                resultHTML += '</div>';
+                
+                // Store in sessionStorage
+                sessionStorage.setItem(`processed_script_${data.placeId}_${data.version}`, data.scriptContent);
+                
+                document.getElementById('processScriptResult').innerHTML = resultHTML;
+                
+                // Reset form
+                document.getElementById('gameScriptFile').value = '';
+                document.getElementById('scriptFileSelected').style.display = 'none';
+                
+                loadUnifiedGames();
+                loadStats();
+                
+            } catch (error) {
+                clearInterval(interval);
+                document.getElementById('processScriptProgress').style.display = 'none';
+                document.getElementById('processScriptBtn').disabled = false;
+                showAlert('processScriptResult', '❌ Error: ' + error.message, 'error');
+            }
+        }
+        
+        // Download Processed Script
+        function downloadProcessedScript(placeId, version) {
+            const scriptContent = sessionStorage.getItem(`processed_script_${placeId}_${version}`);
+            
+            if (!scriptContent) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Script Not Found',
+                    text: 'Script content expired. Please process again.'
+                });
+                return;
+            }
+            
+            const blob = new Blob([scriptContent], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `script_${placeId}_${version}.lua`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            Swal.fire({
+                icon: 'success',
+                title: 'Downloaded!',
+                text: 'Script file downloaded successfully',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
+        
+        // Copy Processed Script
+        function copyProcessedScript(placeId, version) {
+            const scriptContent = sessionStorage.getItem(`processed_script_${placeId}_${version}`);
+            
+            if (!scriptContent) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Script Not Found',
+                    text: 'Script content expired. Please process again.'
+                });
+                return;
+            }
+            
+            navigator.clipboard.writeText(scriptContent).then(() => {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Copied!',
+                    text: 'Script copied to clipboard',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }).catch(err => {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Copy Failed',
+                    text: err.message
+                });
+            });
+        }
+        
+        // Load Unified Games
+        async function loadUnifiedGames() {
             try {
                 const games = await apiCall('/admin/list-games');
                 currentGames = games;
-                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Status</th><th>Script URL</th><th>Actions</th></tr></thead><tbody>';
+                
+                let html = '<table><thead><tr><th>Game Name</th><th>Place ID</th><th>Version</th><th>Profile</th><th>Status</th><th>Backup</th><th>Actions</th></tr></thead><tbody>';
                 
                 if (Array.isArray(games) && games.length > 0) {
                     games.forEach(game => {
                         const statusClass = game.is_active ? 'badge-active' : 'badge-inactive';
                         const statusText = game.is_active ? 'Active' : 'Disabled';
                         
+                        const profileBadge = game.is_obfuscated ?
+                            `<span class="badge badge-vip">🔒 ${game.obfuscation_profile}</span>` :
+                            `<span class="badge badge-basic">📝 none</span>`;
+                        
+                        const backupBadge = game.locker_backup_id ?
+                            `<span class="badge badge-active">💾 Yes</span>` :
+                            `<span class="badge badge-inactive">❌ No</span>`;
+                        
                         html += `
                             <tr>
-                                <td><strong>${game.game_name}</strong></td>
+<td><strong>${game.game_name}</strong></td>
                                 <td><code>${game.place_id}</code></td>
-                                <td>${game.version || '1.0'}</td>
+                                <td>${game.version || 'pending'}</td>
+                                <td>${profileBadge}</td>
                                 <td><span class="badge ${statusClass}">${statusText}</span></td>
-                                <td><a href="${game.script_url}" target="_blank" style="color: var(--primary);">View</a></td>
+                                <td>${backupBadge}</td>
                                 <td>
                                     <div class="action-buttons">
                                         <button class="btn-small ${game.is_active ? 'btn-danger' : 'btn-success'}" 
                                             onclick="toggleGame('${game.place_id}', ${!game.is_active})">
                                             ${game.is_active ? '🔴 Disable' : '🟢 Enable'}
                                         </button>
+                                        <button class="btn-small btn-danger" onclick="deleteUnifiedGame('${game.place_id}', '${game.game_name}')">🗑️ Delete</button>
                                     </div>
                                 </td>
                             </tr>
                         `;
                     });
                 } else {
-                    html += '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No games found</td></tr>';
+                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No games found. Create one above!</td></tr>';
                 }
                 
                 html += '</tbody></table>';
-                document.getElementById('gamesTable').innerHTML = html;
+                document.getElementById('unifiedGamesTable').innerHTML = html;
+                
+                populateGameSelectForUpload();
+                populateLockerGameSelect();
+                
             } catch (error) {
-                document.getElementById('gamesTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
+                document.getElementById('unifiedGamesTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
             }
         }
         
-        // Add Game
-        async function addGame() {
-            const placeId = document.getElementById('newPlaceId').value.trim();
-            const gameName = document.getElementById('newGameName').value.trim();
-            const scriptUrl = document.getElementById('newScriptUrl').value.trim();
-            const version = document.getElementById('newVersion').value.trim();
-            
-            if (!placeId || !gameName || !scriptUrl) {
-                showAlert('gameResult', '⚠️ All fields are required!', 'error');
-                return;
-            }
-            
-            try {
-                await apiCall('/admin/add-game', 'POST', {
-                    placeId,
-                    gameName,
-                    scriptUrl,
-                    version: version || '1.0'
-                });
-                
-                showAlert('gameResult', `✅ Game ${gameName} added!`, 'success');
-                document.getElementById('newPlaceId').value = '';
-                document.getElementById('newGameName').value = '';
-                document.getElementById('newScriptUrl').value = '';
-                document.getElementById('newVersion').value = '1.0';
-                
-                loadGames();
-                loadStats();
-                populateGameSelect();
-            } catch (error) {
-                showAlert('gameResult', `❌ Error: ${error.message}`, 'error');
-            }
-        }
-        
-        // Toggle Game (Kill Switch)
+        // Toggle Game Active/Inactive
         async function toggleGame(placeId, isActive) {
             try {
                 await apiCall('/admin/toggle-game', 'POST', { placeId, isActive });
-                showAlert('gamesTable', `✅ Kill switch ${isActive ? 'deactivated' : 'activated'}!`, 'success');
-                loadGames();
+                Swal.fire({
+                    icon: 'success',
+                    title: isActive ? 'Game Enabled!' : 'Game Disabled!',
+                    text: `Kill switch ${isActive ? 'deactivated' : 'activated'}`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+                loadUnifiedGames();
                 loadStats();
             } catch (error) {
-                showAlert('gamesTable', `❌ Error: ${error.message}`, 'error');
-            }
-        }
-        
-        // Populate Game Select for Script Control
-        function populateGameSelect() {
-            const select = document.getElementById('scriptGameSelect');
-            select.innerHTML = '<option value="">-- Select a game --</option>';
-            
-            if (currentGames && currentGames.length > 0) {
-                currentGames.forEach(game => {
-                    const option = document.createElement('option');
-                    option.value = game.place_id;
-                    option.textContent = `${game.game_name} (${game.place_id})`;
-                    select.appendChild(option);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Toggle Failed',
+                    text: error.message
                 });
             }
         }
         
-        // Load Script Details
-        function loadScriptDetails() {
-            const placeId = document.getElementById('scriptGameSelect').value;
-            if (!placeId) {
-                document.getElementById('scriptDetails').style.display = 'none';
-                return;
-            }
+        // Delete Unified Game
+        async function deleteUnifiedGame(placeId, gameName) {
+            const result = await Swal.fire({
+                title: 'Delete Game?',
+                html: `Are you sure you want to delete <strong>${gameName}</strong>?<br><br>⚠️ This will also delete:<br>• Script files<br>• Locker backups<br>• All associated data<br><br><strong>This cannot be undone!</strong>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '🗑️ Yes, Delete',
+                cancelButtonText: 'Cancel'
+            });
             
-            const game = currentGames.find(g => g.place_id === placeId);
-            if (!game) return;
-            
-            document.getElementById('scriptGameName').value = game.game_name;
-            document.getElementById('scriptPlaceId').value = game.place_id;
-            document.getElementById('scriptVersion').value = game.version || '1.0';
-            document.getElementById('scriptUrl').value = game.script_url;
-            
-            const toggle = document.getElementById('killSwitchToggle');
-            const label = document.getElementById('killSwitchLabel');
-            
-            if (game.is_active) {
-                toggle.classList.add('active');
-                label.textContent = 'Active';
-                label.style.color = 'var(--success)';
-            } else {
-                toggle.classList.remove('active');
-                label.textContent = 'Disabled';
-                label.style.color = 'var(--danger)';
-            }
-            
-            document.getElementById('scriptDetails').style.display = 'block';
-        }
-        
-        // Toggle Kill Switch
-        async function toggleKillSwitch() {
-            const placeId = document.getElementById('scriptPlaceId').value;
-            const game = currentGames.find(g => g.place_id === placeId);
-            
-            if (!game) return;
-            
-            try {
-                await toggleGame(placeId, !game.is_active);
-                await loadGames();
-                loadScriptDetails();
-            } catch (error) {
-                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
-            }
-        }
-        
-        // Update Script
-        async function updateScript() {
-            const placeId = document.getElementById('scriptPlaceId').value;
-            
-            const newUrl = prompt('Enter new script URL:');
-            if (!newUrl) return;
-            
-            const newVersion = prompt('Enter new version:', '1.0');
-            if (!newVersion) return;
-            
-            try {
-                await apiCall('/admin/update-game', 'POST', {
-                    placeId,
-                    scriptUrl: newUrl,
-                    version: newVersion
-                });
-                
-                showAlert('scriptActionResult', '✅ Script updated successfully!', 'success');
-                loadGames();
-                loadScriptDetails();
-            } catch (error) {
-                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
-            }
-        }
-        
-        // Obfuscate Script
-        async function obfuscateScript() {
-            const placeId = document.getElementById('scriptPlaceId').value;
-            
-            if (!confirm('This will obfuscate the script. Continue?')) return;
-            
-            try {
-                showAlert('scriptActionResult', '🔄 Obfuscating script... Please wait...', 'info');
-                
-                const result = await apiCall('/admin/obfuscate', 'POST', { placeId });
-                
-                // Download obfuscated script
-                const blob = new Blob([result.obfuscatedScript], { type: 'text/plain' });
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `obfuscated_${placeId}_${Date.now()}.lua`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-                
-                showAlert('scriptActionResult',
-                    `✅ Script obfuscated! Original: ${result.originalLength} chars, Obfuscated: ${result.obfuscatedLength} chars. File downloaded.`,
-                    'success');
-            } catch (error) {
-                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
-            }
-        }
-        
-        // Delete Game
-        async function deleteGame() {
-            const placeId = document.getElementById('scriptPlaceId').value;
-            const gameName = document.getElementById('scriptGameName').value;
-            
-            if (!confirm(`Delete game "${gameName}"? This cannot be undone!`)) return;
+            if (!result.isConfirmed) return;
             
             try {
                 await apiCall('/admin/delete-game', 'POST', { placeId });
-                showAlert('scriptActionResult', `✅ Game deleted!`, 'success');
                 
-                document.getElementById('scriptDetails').style.display = 'none';
-                document.getElementById('scriptGameSelect').value = '';
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Deleted!',
+                    text: `${gameName} has been deleted`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
                 
-                loadGames();
+                loadUnifiedGames();
                 loadStats();
-                populateGameSelect();
+                
             } catch (error) {
-                showAlert('scriptActionResult', `❌ Error: ${error.message}`, 'error');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Delete Failed',
+                    text: error.message
+                });
             }
         }
-        
-        // Load Logs
-        async function loadLogs() {
-            try {
-                const userId = document.getElementById('filterUserId').value.trim();
-                const endpoint = userId ? `/admin/logs?userId=${userId}` : '/admin/logs';
-                const logs = await apiCall(endpoint);
-                
-                let html = '<table><thead><tr><th>Timestamp</th><th>User ID</th><th>Place ID</th><th>IP Address</th><th>HWID</th><th>Status</th><th>Error</th></tr></thead><tbody>';
-                
-                if (Array.isArray(logs) && logs.length > 0) {
-                    logs.forEach(log => {
-                        const statusClass = log.success ? 'badge-active' : 'badge-inactive';
-                        const statusText = log.success ? 'Success' : 'Failed';
-                        const time = new Date(log.timestamp).toLocaleString();
-                        
-                        html += `
-                            <tr>
-                                <td>${time}</td>
-                                <td><code>${log.user_id}</code></td>
-                                <td><code>${log.place_id || 'N/A'}</code></td>
-                                <td>${log.ip_address || 'N/A'}</td>
-                                <td>${log.hwid ? '<code>Set</code>' : 'N/A'}</td>
-                                <td><span class="badge ${statusClass}">${statusText}</span></td>
-                                <td style="color: var(--text-muted);">${log.error_message || '-'}</td>
-                            </tr>
-                        `;
-                    });
-                } else {
-                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No logs found</td></tr>';
-                }
-                
-                html += '</tbody></table>';
-                document.getElementById('logsTable').innerHTML = html;
-            } catch (error) {
-                document.getElementById('logsTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
-            }
-        }
-        
-        // Clear Logs Filter
-        function clearLogsFilter() {
-            document.getElementById('filterUserId').value = '';
-            loadLogs();
-        }
-        
-        // Switch Tab
-        function switchTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            const buttons = document.querySelectorAll('.tab');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            const selectedTab = document.getElementById(`tab-${tabName}`);
-            if (selectedTab) selectedTab.classList.add('active');
-            
-            event.target.classList.add('active');
-            
-            if (tabName === 'users') loadUsers();
-            else if (tabName === 'games') loadGames();
-            else if (tabName === 'scripts') populateGameSelect();
-            else if (tabName === 'logs') loadLogs();
-        }
-        
-        // Auto-refresh stats
-        setInterval(() => {
-            if (document.getElementById('dashboard').style.display !== 'none') {
-                loadStats();
-            }
-        }, 30000);
-        
         // ===== LOCKER FUNCTIONS =====
-        
-        let lockerConfig = null;
-        const ADMIN_USER_ID = 'admin'; // Ganti dengan system auth real
         
         // Check Locker Status
         async function checkLockerStatus() {
             try {
                 document.getElementById('lockerStatus').innerHTML = `
-            <div class="loading">
-                <div class="spinner"></div>
-                <p>Checking locker configuration...</p>
-            </div>
-        `;
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Checking locker configuration...</p>
+                    </div>
+                `;
                 
                 const data = await apiCall(`/locker/data?userId=${ADMIN_USER_ID}`);
                 
@@ -1518,8 +1607,8 @@
                 }
             } catch (error) {
                 document.getElementById('lockerStatus').innerHTML = `
-            <div class="alert alert-error">❌ Error loading locker: ${error.message}</div>
-        `;
+                    <div class="alert alert-error">❌ Error loading locker: ${error.message}</div>
+                `;
             }
         }
         
@@ -1531,11 +1620,11 @@
                 let wordsHtml = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">';
                 bip39Words.forEach((word, i) => {
                     wordsHtml += `
-                <div style="background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(59, 130, 246, 0.3);">
-                    <span style="color: #94a3b8; font-size: 0.9em;">${i + 1}.</span><br>
-                    <strong style="color: #0ea5e9; font-size: 1.2em;">${word}</strong>
-                </div>
-            `;
+                        <div style="background: #0f172a; padding: 15px; border-radius: 10px; text-align: center; border: 1px solid rgba(59, 130, 246, 0.3);">
+                            <span style="color: #94a3b8; font-size: 0.9em;">${i + 1}.</span><br>
+                            <strong style="color: #0ea5e9; font-size: 1.2em;">${word}</strong>
+                        </div>
+                    `;
                 });
                 wordsHtml += '</div>';
                 
@@ -1543,14 +1632,14 @@
                     title: '🔑 Your Recovery Phrase',
                     width: '800px',
                     html: `
-                ${wordsHtml}
-                <div style="background: rgba(245, 158, 11, 0.2); padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #f59e0b;">
-                    <p style="color: #fbbf24; margin: 0; line-height: 1.8;">
-                        <strong>⚠️ CRITICAL:</strong> Write these words down or take a photo NOW!<br>
-                        You'll need them to decrypt your scripts. If you lose them, your encrypted scripts are gone forever.
-                    </p>
-                </div>
-            `,
+                        ${wordsHtml}
+                        <div style="background: rgba(245, 158, 11, 0.2); padding: 20px; border-radius: 10px; margin-top: 20px; border-left: 4px solid #f59e0b;">
+                            <p style="color: #fbbf24; margin: 0; line-height: 1.8;">
+                                <strong>⚠️ CRITICAL:</strong> Write these words down or take a photo NOW!<br>
+                                You'll need them to decrypt your scripts. If you lose them, your encrypted scripts are gone forever.
+                            </p>
+                        </div>
+                    `,
                     showCancelButton: true,
                     cancelButtonText: '🔄 Generate New Words',
                     confirmButtonText: '✅ I Saved Them',
@@ -1590,7 +1679,7 @@
             }
         }
         
-        // Populate Game Select
+        // Populate Game Select for Locker
         function populateLockerGameSelect() {
             const select = document.getElementById('lockerGameSelect');
             select.innerHTML = '<option value="">-- Select a game --</option>';
@@ -1607,15 +1696,15 @@
             }
         }
         
-        // Prompt BIP39
+        // Prompt BIP39 Recovery Phrase
         async function promptBIP39(title = '🔑 Enter Recovery Phrase') {
             let inputsHtml = '<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 20px 0;">';
             for (let i = 1; i <= 12; i++) {
                 inputsHtml += `
-            <input type="text" id="bipWord${i}" class="swal2-input" 
-                   placeholder="Word ${i}" 
-                   style="width: 90%; padding: 12px; margin: 0; text-align: center;">
-        `;
+                    <input type="text" id="bipWord${i}" class="swal2-input" 
+                           placeholder="Word ${i}" 
+                           style="width: 90%; padding: 12px; margin: 0; text-align: center;">
+                `;
             }
             inputsHtml += '</div>';
             
@@ -1623,11 +1712,11 @@
                 title: title,
                 width: '800px',
                 html: `
-            ${inputsHtml}
-            <p style="color: #94a3b8; margin-top: 20px;">
-                Enter your 12-word recovery phrase to decrypt your scripts.
-            </p>
-        `,
+                    ${inputsHtml}
+                    <p style="color: #94a3b8; margin-top: 20px;">
+                        Enter your 12-word recovery phrase to decrypt your scripts.
+                    </p>
+                `,
                 showCancelButton: true,
                 confirmButtonText: '🔓 Unlock',
                 preConfirm: () => {
@@ -1723,20 +1812,20 @@
         async function loadLockedScripts() {
             try {
                 document.getElementById('lockedScriptsTable').innerHTML = `
-            <div class="loading">
-                <div class="spinner"></div>
-                <p>Loading encrypted scripts...</p>
-            </div>
-        `;
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>Loading encrypted scripts...</p>
+                    </div>
+                `;
                 
                 const data = await apiCall(`/locker/list?userId=${ADMIN_USER_ID}`);
                 
                 if (!data.scripts || data.scripts.length === 0) {
                     document.getElementById('lockedScriptsTable').innerHTML = `
-                <p style="color: var(--text-muted); text-align: center; padding: 40px;">
-                    No locked scripts yet. Upload one to get started!
-                </p>
-            `;
+                        <p style="color: var(--text-muted); text-align: center; padding: 40px;">
+                            No locked scripts yet. Upload one to get started!
+                        </p>
+                    `;
                     return;
                 }
                 
@@ -1746,19 +1835,19 @@
                     const uploadDate = new Date(script.created_at).toLocaleString();
                     
                     html += `
-                <tr>
-                    <td><code>${script.id}</code></td>
-                    <td><code>${script.place_id}</code></td>
-                    <td>${uploadDate}</td>
-                    <td><span class="badge badge-active">🔒 Encrypted</span></td>
-                    <td>
-                        <div class="action-buttons">
-                            <button class="btn-small btn-success" onclick="downloadFromLocker(${script.id}, '${script.place_id}')">📥 Download</button>
-                            <button class="btn-small btn-danger" onclick="deleteFromLocker(${script.id})">🗑️ Delete</button>
-                        </div>
-                    </td>
-                </tr>
-            `;
+                        <tr>
+                            <td><code>${script.id}</code></td>
+                            <td><code>${script.place_id}</code></td>
+                            <td>${uploadDate}</td>
+                            <td><span class="badge badge-active">🔒 Encrypted</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn-small btn-success" onclick="downloadFromLocker(${script.id}, '${script.place_id}')">📥 Download</button>
+                                    <button class="btn-small btn-danger" onclick="deleteFromLocker(${script.id})">🗑️ Delete</button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
                 });
                 
                 html += '</tbody></table>';
@@ -1766,8 +1855,8 @@
                 
             } catch (error) {
                 document.getElementById('lockedScriptsTable').innerHTML = `
-            <div class="alert alert-error">❌ Error: ${error.message}</div>
-        `;
+                    <div class="alert alert-error">❌ Error: ${error.message}</div>
+                `;
             }
         }
         
@@ -1830,17 +1919,92 @@
                 showAlert('lockerActionResult', '❌ Delete failed: ' + error.message, 'error');
             }
         }
+        // ===== LOGS =====
         
-        // Update switchTab function
-        const originalSwitchTab = switchTab;
-        switchTab = function(tabName) {
-            originalSwitchTab(tabName);
-            
-            if (tabName === 'locker') {
-                checkLockerStatus();
+        // Load Logs
+        async function loadLogs() {
+            try {
+                const userId = document.getElementById('filterUserId').value.trim();
+                const endpoint = userId ? `/admin/logs?userId=${userId}` : '/admin/logs';
+                const logs = await apiCall(endpoint);
+                
+                let html = '<table><thead><tr><th>Timestamp</th><th>User ID</th><th>Place ID</th><th>IP Address</th><th>HWID</th><th>Status</th><th>Error</th></tr></thead><tbody>';
+                
+                if (Array.isArray(logs) && logs.length > 0) {
+                    logs.forEach(log => {
+                        const statusClass = log.success ? 'badge-active' : 'badge-inactive';
+                        const statusText = log.success ? 'Success' : 'Failed';
+                        const time = new Date(log.timestamp).toLocaleString();
+                        
+                        html += `
+                            <tr>
+                                <td>${time}</td>
+                                <td><code>${log.user_id}</code></td>
+                                <td><code>${log.place_id || 'N/A'}</code></td>
+                                <td>${log.ip_address || 'N/A'}</td>
+                                <td>${log.hwid ? '<code>Set</code>' : 'N/A'}</td>
+                                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                                <td style="color: var(--text-muted);">${log.error_message || '-'}</td>
+                            </tr>
+                        `;
+                    });
+                } else {
+                    html += '<tr><td colspan="7" style="text-align: center; color: var(--text-muted);">No logs found</td></tr>';
+                }
+                
+                html += '</tbody></table>';
+                document.getElementById('logsTable').innerHTML = html;
+            } catch (error) {
+                document.getElementById('logsTable').innerHTML = `<div class="alert alert-error">Error: ${error.message}</div>`;
             }
-        };
+        }
+        
+        // Clear Logs Filter
+        function clearLogsFilter() {
+            document.getElementById('filterUserId').value = '';
+            loadLogs();
+        }
+        
+        // ===== TAB SWITCHING =====
+        
+        function switchTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            const buttons = document.querySelectorAll('.tab');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            const selectedTab = document.getElementById(`tab-${tabName}`);
+            if (selectedTab) selectedTab.classList.add('active');
+            
+            event.target.classList.add('active');
+            
+            if (tabName === 'users') {
+                loadUsers();
+            } else if (tabName === 'games') {
+                loadUnifiedGames();
+                updateObfuscationInfo();
+            } else if (tabName === 'locker') {
+                checkLockerStatus();
+            } else if (tabName === 'logs') {
+                loadLogs();
+            }
+        }
+        
+        // ===== AUTO-REFRESH =====
+        
+        setInterval(() => {
+            if (document.getElementById('dashboard').style.display !== 'none') {
+                loadStats();
+            }
+        }, 30000);
+        
+        // ===== INITIALIZE =====
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            updateObfuscationInfo();
+        });
     </script>
 </body>
-</html>
 
+</html>
